@@ -52,6 +52,8 @@ app_ui <- function(request) {
           shinydashboard::tabItem(tabName = "administrate",
                                   # dataset and file selection
                                   fluidPage(
+                                    waiter::use_waiter(),
+                                    waiter::waiter_preloader(),
                                     mod_dataset_selection_ui("dataset_selection_ui_1"),
                                     mod_file_selection_ui("file_selection_ui_1"),
                                     br(),
