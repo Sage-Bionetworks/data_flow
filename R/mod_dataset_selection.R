@@ -87,28 +87,25 @@ mod_dataset_selection_server <- function(id){
     # selected_project_df (dataframe)
     # action_btn (TRUE/FALSE)
     
-    select_storage_project_out <- mod_select_storage_project_server("select_storage_project_1")
-    
-    output$dataset_tbl <- DT::renderDataTable({
-      DT::datatable(select_storage_project_out())
-      
+    select_storage_project <- mod_select_storage_project_server("select_storage_project_1")
     
     ## ON CLICK DISPLAY STORAGE PROJECT DATASETS  ###########################################################
     # on button click call storage_project_datasets using selected project ID
     
-    # observeEvent(select_storage_project_out$action_btn(), {
-    #   # show waiter
-    #   w$show()
-    # 
-    #   # on exit - hide waiter
-    #   on.exit({
-    #     w$hide()
-    #   })
-    #   
+    observeEvent(select_storage_project()$action_btn, {
+      # show waiter
+      w$show()
 
-      # output$dataset_tbl <- DT::renderDataTable({
-      #   DT::datatable(storage_project_df)
-      #   
+      # on exit - hide waiter
+      on.exit({
+        w$hide()
+      })
+
+      output$dataset_tbl <- DT::renderDataTable({
+        req(select_storage_project())
+        DT::datatable(select_storage_project()$selected_df)
+      })
+
       })
 
 
@@ -140,8 +137,6 @@ mod_dataset_selection_server <- function(id){
       #                 filter = list(position = 'top', clear = TRUE))
       # })
 
- #   })
-
     ## ON BUTTON CLICK SUBMIT DATASET SELECTION #############################################################
 
     # when button is pushed
@@ -158,8 +153,9 @@ mod_dataset_selection_server <- function(id){
       })
  
 
-  })
-  }
+    })
+}
+ 
     
 ## To be copied in the UI
 # mod_dataset_selection2_ui("dataset_selection2_1")

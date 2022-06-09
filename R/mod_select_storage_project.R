@@ -21,9 +21,6 @@ mod_select_storage_project_ui <- function(id){
       actionButton(ns("select_project_btn"),
                    "Submit"),
       
-      DT::DTOutput(ns("tst_tbl")),
-      textOutput(ns("tst_proj")),
-      
       br()
     )
  
@@ -36,6 +33,8 @@ mod_select_storage_project_ui <- function(id){
 mod_select_storage_project_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
+    
+    rv <- reactiveValues()
     
     schematic_token <- Sys.getenv("schematicToken")
     asset_view <- "syn20446927"
@@ -64,28 +63,23 @@ mod_select_storage_project_server <- function(id){
        selectInput(inputId = ns("selected_project"),
                    label = "Select Project",
                    choices = storage_project_df$name,
-                   selectize = FALSE)
+                   selectize = FALSE) # must be false or for some reason cannot reference `input$selected_project`
       
     })
     
     # ON BUTTON CLICK RETURN SELECTED PROJECT
     # return project df subsetted by selected project
-    selected_project_df <- eventReactive(input$select_project_btn, {
+    eventReactive(input$select_project_btn, {
       
-      storage_project_df[ grepl(input$selected_project, storage_project_df$name), ]
+      selected_project_df <- storage_project_df[ grepl(input$selected_project, storage_project_df$name), ]
       
-      # return(list(
-      #   selected_project_df = selected_project_df,
-      #   action_btn = input$select_select_project_btn
-      #   ))
+      return(list(
+        selected_df = selected_project_df,
+        action_btn = input$select_project_btn
+        ))
       })
     
-    # return(list(
-    #   selected_project_df = reactive({ selected_project_df() }),
-    #   action_btn = reactive({ input$select_project_btn })
-    # ))
     
-    return( reactive({ selected_project_df() }))
   })
   }
     
