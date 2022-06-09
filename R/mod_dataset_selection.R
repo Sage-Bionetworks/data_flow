@@ -84,7 +84,7 @@ mod_dataset_selection_server <- function(id){
     asset_view <- "syn20446927"
     
     # STORAGE PROJECT SELECTOR MODULE #######################################################################
-    # selected_project_df (dataframe)
+    # selected_df (dataframe)
     # action_btn (TRUE/FALSE)
     
     select_storage_project <- mod_select_storage_project_server("select_storage_project_1")
@@ -93,6 +93,7 @@ mod_dataset_selection_server <- function(id){
     # on button click call storage_project_datasets using selected project ID
     
     observeEvent(select_storage_project()$action_btn, {
+      
       # show waiter
       w$show()
 
@@ -100,42 +101,35 @@ mod_dataset_selection_server <- function(id){
       on.exit({
         w$hide()
       })
-
-      output$dataset_tbl <- DT::renderDataTable({
-        req(select_storage_project())
-        DT::datatable(select_storage_project()$selected_df)
-      })
-
-      })
-
-
+      
       # call schematic API - get datasets for selected storage project
       
       ### COMMENT OUT FOR TESTING
-      # dataset_list <- storage_project_datasets(asset_view = asset_view,
-      #                                          project_id = selected_project_df$id,
-      #                                          input_token = schematic_token)
-      # 
-      # # schematic outputs a list
-      # # parse into a dataframe
-      # 
-      # rv$dataset_df <- list_to_dataframe(list = dataset_list,
-      #                                 col_names = c("id", "name"))
-      # 
-      # rv$dataset_df <- dplyr::select(rv$dataset_df, name, id)
-      # 
-      # rv$dataset_df <- data.frame(name = "HTAN_CenterA_Demographics", id = "syn30028964")
-      # 
-      # # render data table with scroll bar, no pagination, and filtering
-      # output$dataset_tbl <- DT::renderDataTable({
-      #   DT::datatable(rv$dataset_df,
-      #                 selection = "single",
-      #                 option = list(scrollY = 500,
-      #                               scrollCollapse = TRUE,
-      #                               bPaginate = FALSE,
-      #                               dom = "t"),
-      #                 filter = list(position = 'top', clear = TRUE))
-      # })
+      dataset_list <- storage_project_datasets(asset_view = asset_view,
+                                               project_id = select_storage_project()$selected_df$id,
+                                               input_token = schematic_token)
+
+      # schematic outputs a list
+      # parse into a dataframe
+
+      rv$dataset_df <- list_to_dataframe(list = dataset_list,
+                                      col_names = c("id", "name"))
+
+      rv$dataset_df <- dplyr::select(rv$dataset_df, name, id)
+
+      #rv$dataset_df <- data.frame(name = "HTAN_CenterA_Demographics", id = "syn30028964")
+
+      # render data table with scroll bar, no pagination, and filtering
+      output$dataset_tbl <- DT::renderDataTable({
+        DT::datatable(rv$dataset_df,
+                      selection = "single",
+                      option = list(scrollY = 500,
+                                    scrollCollapse = TRUE,
+                                    bPaginate = FALSE,
+                                    dom = "t"),
+                      filter = list(position = 'top', clear = TRUE))
+      })
+    })
 
     ## ON BUTTON CLICK SUBMIT DATASET SELECTION #############################################################
 

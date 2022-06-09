@@ -41,23 +41,21 @@ mod_select_storage_project_server <- function(id){
     
     # API CALL : GET STORAGE PROJECTS #######################################################################
 
-    # storage_project_list <- storage_projects(asset_view = asset_view,
-    #                                          input_token = schematic_token)
-    # 
-    # # name list (required for list_to_dataframe)
-    # 
-    # # convert to dataframe
-    # storage_project_df <- list_to_dataframe(list = storage_project_list,
-    #                                         col_names = c("id", "name"))
-    # 
-    # # reorder and add to reactive values
-    # storage_project_df <- dplyr::select(storage_project_df, name, id)
-    
-    storage_project_df <- data.frame(name = c("HTAN CenterA", "DROPME"),
-                                     id = c("synID####", "synID1234"))
+    storage_project_list <- storage_projects(asset_view = asset_view,
+                                             input_token = schematic_token)
+
+    # name list (required for list_to_dataframe)
+
+    # convert to dataframe
+    storage_project_df <- list_to_dataframe(list = storage_project_list,
+                                            col_names = c("id", "name"))
+
+    # reorder and add to reactive values
+    storage_project_df <- dplyr::select(storage_project_df, name, id)
     
     # DROP DOWN LISTING STORAGE PROJECTS ####################################################################
     
+    # render ui for storage project drop down
     output$project_selector <- shiny::renderUI({
       
        selectInput(inputId = ns("selected_project"),
@@ -67,8 +65,9 @@ mod_select_storage_project_server <- function(id){
       
     })
     
-    # ON BUTTON CLICK RETURN SELECTED PROJECT
-    # return project df subsetted by selected project
+    # ON BUTTON CLICK RETURN SELECTED PROJECT  ##############################################################
+    
+    # return project df subsetted by selected project and action button click
     eventReactive(input$select_project_btn, {
       
       selected_project_df <- storage_project_df[ grepl(input$selected_project, storage_project_df$name), ]
