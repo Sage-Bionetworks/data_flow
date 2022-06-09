@@ -1,6 +1,8 @@
-#' select_storage_project UI Function
-#'
-#' @description A shiny Module.
+# Storage Project Selection Module UI
+
+#' @title select_storage_project_ui and select_storage_project_server
+#' @description A shiny module. Outputs a selectInput dropdown of Synapse storage project names to the UI.
+#' @return To the server: A list information from the module. `selected_df` - a dataframe with a single row containing the `name` and `id` of the selected storage project. `action_btn` - TRUE/FALSE output from button click.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
@@ -27,14 +29,12 @@ mod_select_storage_project_ui <- function(id){
   )
 }
     
-#' select_storage_project Server Functions
+# Storage Project Selection Module Server
 #'
 #' @noRd 
 mod_select_storage_project_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
-    
-    rv <- reactiveValues()
     
     schematic_token <- Sys.getenv("schematicToken")
     asset_view <- "syn20446927"
@@ -77,8 +77,6 @@ mod_select_storage_project_server <- function(id){
         action_btn = input$select_project_btn
         ))
       })
-    
-    
   })
   }
     
