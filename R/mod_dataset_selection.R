@@ -84,33 +84,33 @@ mod_dataset_selection_server <- function(id){
     asset_view <- "syn20446927"
     
     # STORAGE PROJECT SELECTOR MODULE #######################################################################
-    # selected_project (dataframe)
+    # selected_project_df (dataframe)
     # action_btn (TRUE/FALSE)
     
-    mod_select_storage_project_server("select_storage_project_1")
+    select_storage_project_out <- mod_select_storage_project_server("select_storage_project_1")
     
-    # output$dataset_tbl <- DT::renderDataTable({
-    #   DT::datatable(select_storage_project_out())
-    # })
-
+    output$dataset_tbl <- DT::renderDataTable({
+      DT::datatable(select_storage_project_out())
+      
     
     ## ON CLICK DISPLAY STORAGE PROJECT DATASETS  ###########################################################
     # on button click call storage_project_datasets using selected project ID
     
     # observeEvent(select_storage_project_out$action_btn(), {
-    #   
     #   # show waiter
     #   w$show()
-    #   
+    # 
     #   # on exit - hide waiter
     #   on.exit({
     #     w$hide()
     #   })
     #   
-    #   output$dataset_tbl <- DT::renderDataTable({
-    #     DT::datatable(select_storage_project_out$selected_project_df())
-    #   })
-    # 
+
+      # output$dataset_tbl <- DT::renderDataTable({
+      #   DT::datatable(storage_project_df)
+      #   
+      })
+
 
       # call schematic API - get datasets for selected storage project
       
@@ -140,7 +140,7 @@ mod_dataset_selection_server <- function(id){
       #                 filter = list(position = 'top', clear = TRUE))
       # })
 
-    #})
+ #   })
 
     ## ON BUTTON CLICK SUBMIT DATASET SELECTION #############################################################
 

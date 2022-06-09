@@ -54,38 +54,40 @@ mod_select_storage_project_server <- function(id){
     # # reorder and add to reactive values
     # storage_project_df <- dplyr::select(storage_project_df, name, id)
     
-    storage_project_df <- data.frame(name = "HTAN CenterA",
-                                     id = "synID####")
+    storage_project_df <- data.frame(name = c("HTAN CenterA", "DROPME"),
+                                     id = c("synID####", "synID1234"))
     
     # DROP DOWN LISTING STORAGE PROJECTS ####################################################################
     
-    output$project_selector <- renderUI({
+    output$project_selector <- shiny::renderUI({
       
        selectInput(inputId = ns("selected_project"),
                    label = "Select Project",
-                   choices = c("A", "B", "C"))
+                   choices = storage_project_df$name,
+                   selectize = FALSE)
       
     })
     
     # ON BUTTON CLICK RETURN SELECTED PROJECT
     # return project df subsetted by selected project
-    observeEvent(input$select_project_btn, {
+    selected_project_df <- eventReactive(input$select_project_btn, {
       
-      output$tst_proj <- renderText({
-        
-        if (is.null(input$selected_project)) {
-          text <- cat("select input is null")
-        } else {
-          text <- input$selected_project
-        }
-        return(text)
-      })
-
+      storage_project_df[ grepl(input$selected_project, storage_project_df$name), ]
       
+      # return(list(
+      #   selected_project_df = selected_project_df,
+      #   action_btn = input$select_select_project_btn
+      #   ))
       })
- 
+    
+    # return(list(
+    #   selected_project_df = reactive({ selected_project_df() }),
+    #   action_btn = reactive({ input$select_project_btn })
+    # ))
+    
+    return( reactive({ selected_project_df() }))
   })
-}
+  }
     
 ## To be copied in the UI
 # mod_select_storage_project_ui("select_storage_project_1")
