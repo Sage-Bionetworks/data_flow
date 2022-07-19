@@ -4,10 +4,12 @@
 \alias{create_dashboard}
 \title{Create a dashboard style datatable}
 \usage{
-create_dashboard(prepped_dataframe)
+create_dashboard(df, config)
 }
 \arguments{
-\item{A}{dataframe prepared by `prep_df_for_dash()` with the columns `Contributor`, `Dataset_Name`, `Dataset_Type`, `Num_Items`, `Release_Scheduled`, `Embargo`, `Standard_Compliance`, `QC_Compliance`,`PHI_Detection_Compliance`, `Access_Controls_Compliance`, `Data_Portal`, `Released`, `past_due`}
+\item{df}{A dataframe prepared by `prep_df_for_dash()` with the columns `Contributor`, `Dataset_Name`, `Dataset_Type`, `Num_Items`, `Release_Scheduled`, `Embargo`, `Standard_Compliance`, `QC_Compliance`,`PHI_Detection_Compliance`, `Access_Controls_Compliance`, `Data_Portal`, `Released`, `past_due`}
+
+\item{config}{Config for datatable dashboard module in `inst/datatable_dashboard_config.json`}
 }
 \description{
 Create a dashboard style datatable

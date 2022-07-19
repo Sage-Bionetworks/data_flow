@@ -32,17 +32,16 @@ mod_select_storage_project_ui <- function(id){
 # Storage Project Selection Module Server
 #'
 #' @noRd 
-mod_select_storage_project_server <- function(id){
+mod_select_storage_project_server <- function(id, asset_view, input_token) {
+  
   moduleServer( id, function(input, output, session){
-    ns <- session$ns
     
-    schematic_token <- Sys.getenv("schematicToken")
-    asset_view <- "syn20446927"
+    ns <- session$ns
     
     # API CALL : GET STORAGE PROJECTS #######################################################################
 
     storage_project_list <- storage_projects(asset_view = asset_view,
-                                             input_token = schematic_token)
+                                             input_token = input_token)
 
     # name list (required for list_to_dataframe)
 

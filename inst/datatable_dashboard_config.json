@@ -1,0 +1,41 @@
+{
+    "contributor": {
+        "col_name": "Contributor"
+    },
+    
+    "dataset_name": {
+        "col_name": "Dataset Name"
+    },
+
+    "dataset_type": {
+        "col_name": "Datset Type"
+    },
+
+    "num_items": {
+        "col_name": "Number of Items"
+    },
+
+    "release_scheduled": {
+        "col_name": "Release Scheduled",
+        "na_replace": "Not scheduled",
+        "color_past_due": "True"
+    },
+
+    "embargo": {
+        "col_name": "Embargo",
+        "na_replace": "No embargo"
+    },
+
+    "standard_compliance": {
+        "col_name": "Standard Compliance",
+        "icon": "true"
+    },
+
+    "data_portal": {
+        "col_name": "Data Portal"
+    },
+
+    "released": {
+        "col_name": "Released"
+    }
+}

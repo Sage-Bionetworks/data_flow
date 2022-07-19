@@ -35,8 +35,10 @@ mod_file_selection_ui <- function(id){
 #' file_selection Server Functions
 #'
 #' @noRd 
-mod_file_selection_server <- function(id, dataset){
-  moduleServer( id, function(input, output, session){
+mod_file_selection_server <- function(id, dataset, asset_view, input_token) {
+  
+  moduleServer( id, function(input, output, session) {
+    
     ns <- session$ns
     
     w <- Waiter$new(id = ns("select_files_wrapper"),
@@ -46,23 +48,7 @@ mod_file_selection_server <- function(id, dataset){
                       h4("Retrieving manifest...")),
                     color = transparent(.8))
     
-    # HARDCODED VARIABLES ###################################################################################
-    
-    # get token from renviron
-    # TODO: repetitive figure out how to store or pass as variable
-    
-    schematic_token <- Sys.getenv("schematicToken")
-    
-    # manually set asset view
-    # TODO: repetitive figure out how to store or pass asset_view
-    
-    asset_view <- "syn20446927"
 
-
-    # TODO: similar to data curator will want to initiate file selector data pull
-    #       after the toggle is selected
-    
-    
     # ON CLICK GET MANIFEST FOR SELECTED DATASET ############################################################
     # FIXME: Button click data flow is not ideal
     # Click of show file level view must happen AFTER dataset is selected
@@ -82,7 +68,7 @@ mod_file_selection_server <- function(id, dataset){
       ds <- dataset()
       manifest_download_to_df(asset_view = asset_view,
                               dataset_id = ds$id,
-                              input_token = schematic_token)
+                              input_token = input_token)
       
     })
     

@@ -46,51 +46,37 @@ mod_tabbed_dashboard_ui <- function(id){
 #' tabbed_dashboard Server Functions
 #'
 #' @noRd 
-mod_tabbed_dashboard_server <- function(id, df){
+mod_tabbed_dashboard_server <- function(id, df, config){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    # qc_columns
-    qc_cols <- c("Standard_Compliance", "QC_Compliance", "PHI_Detection_Compliance", 
-                 "Access_Controls_Compliance", "Data_Portal")
-    
-    ## FIXME : move this outside of datatable function
-    # get todays date
-    today <- Sys.Date()
-    
-    # floor date (only care about month/year)
-    today <- lubridate::floor_date(today, unit = "month")
-    
-    # add a column to df of TRUE/FALSE date is past due
-    all_datasets <- reactive({
-      data <- df()
-      dates <- lubridate::floor_date(data$Release_Scheduled, unit = "month")
-      data$past_due <- ifelse(dates < today, "pd", 
-                              ifelse(dates == today, "t", NA))
-      return(data)
-    })
+    # TODO: Remove hard coded column names 
+    # I think column names will come from data flow component
     
     # subset dataframe into various views
     unreleased_datasets <- reactive({
-      data <- all_datasets()
+      data <- df()
       data[ data$Released == FALSE, ]
     })
 
     # not scheduled
     not_scheduled_datasets <- reactive({
-      data <- all_datasets()
+      data <- df()
       data[ is.na(data$Release_Scheduled), ]
     })
 
     # all checks passing / no embargo / unreleased (i.e. ready for release)
     all_checks_passed_datasets <- reactive({
-      data <- all_datasets()
+      
+      qc_cols <- unlist(strsplit(config$icon$col_names, ","))
+      
+      data <- df()
 
       # which rows have all qc_cols == TRUE
       passing <- apply(data[ , qc_cols ], 1, all)
 
       # which rows have passed their embargo date or are NA
-      no_embargo <- data$Embargo <= today | is.na(data$Embargo)
+      no_embargo <- data$Embargo <= Sys.Date() | is.na(data$Embargo)
 
       # which rows are unreleased
       unreleased <- data$Released == FALSE
@@ -105,26 +91,31 @@ mod_tabbed_dashboard_server <- function(id, df){
 
     # previously released
     released_datasets <- reactive({
-      data <- all_datasets()
+      data <- df()
       data[ data$Released == TRUE, ]
     })
     
     # render datatables
     
     mod_datatable_dashboard_server("datatable_dashboard_all",
-                                   all_datasets)
+                                   df,
+                                   config)
     
     mod_datatable_dashboard_server("datatable_dashboard_unreleased",
-                                   unreleased_datasets)
+                                   unreleased_datasets,
+                                   config)
     
     mod_datatable_dashboard_server("datatable_dashboard_not_scheduled",
-                                   not_scheduled_datasets)
+                                   not_scheduled_datasets,
+                                   config)
     
     mod_datatable_dashboard_server("datatable_dashboard_ready",
-                                   all_checks_passed_datasets)
+                                   all_checks_passed_datasets,
+                                   config)
     
     mod_datatable_dashboard_server("datatable_dashboard_archive",
-                                   released_datasets)
+                                   released_datasets,
+                                   config)
   })
 }
     

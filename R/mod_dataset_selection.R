@@ -53,8 +53,12 @@ mod_dataset_selection_ui <- function(id){
 #' dataset_selection2 Server Functions
 #'
 #' @noRd 
-mod_dataset_selection_server <- function(id){
-  moduleServer( id, function(input, output, session){
+mod_dataset_selection_server <- function(id,
+                                         asset_view,
+                                         input_token) {
+  
+  moduleServer( id, function(input, output, session) {
+    
     ns <- session$ns
     
     # initialize object that contains reactive values
@@ -68,26 +72,13 @@ mod_dataset_selection_server <- function(id){
                       h4("Retrieving datasets...")),
                     color = transparent(.8))
     
-    # HARDCODED VARIABLES ###################################################################################
-    
-    # FIXME: Need to load data before app launches (like how DCA waites for data before loading)
-    # Currently it takes the drop down a loooong time to render and appears to be missing.
-    
-    # get token from renviron
-    # TODO: repetitive figure out how to store or pass as variable
-    
-    schematic_token <- Sys.getenv("schematicToken")
-    
-    # manually set asset view
-    # TODO: repetitive figure out how to store or pass asset_view
-    
-    asset_view <- "syn20446927"
-    
     # STORAGE PROJECT SELECTOR MODULE #######################################################################
     # selected_df (dataframe)
     # action_btn (TRUE/FALSE)
     
-    select_storage_project <- mod_select_storage_project_server("select_storage_project_1")
+    select_storage_project <- mod_select_storage_project_server(id = "select_storage_project_1",
+                                                                asset_view = asset_view,
+                                                                input_token = input_token)
     
     ## ON CLICK DISPLAY STORAGE PROJECT DATASETS  ###########################################################
     # on button click call storage_project_datasets using selected project ID
@@ -107,7 +98,7 @@ mod_dataset_selection_server <- function(id){
       ### COMMENT OUT FOR TESTING
       dataset_list <- storage_project_datasets(asset_view = asset_view,
                                                project_id = select_storage_project()$selected_df$id,
-                                               input_token = schematic_token)
+                                               input_token = input_token)
 
       # schematic outputs a list
       # parse into a dataframe
