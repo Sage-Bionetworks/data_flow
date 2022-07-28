@@ -1,6 +1,6 @@
-###############################################
-## Functions that create stylized datatables ##
-###############################################
+#########################################################
+## Functions that create stylized datatable dashboards ##
+#########################################################
 
 #' Create a dashboard style datatable
 #'
@@ -30,7 +30,7 @@ style_dashboard <- function(prepped_dataframe,
                             config) {
   
   # get icon col index
-  icon_idx <- match(get_colname_by_type(config, "icon"), names(prepped_dataframe))
+  icon_idx <- match(get_colname_by_type("icon", config), names(prepped_dataframe))
   
   # define center styling for icon columns
   center_list <- list(className = 'dt-center', targets = icon_idx)
@@ -45,9 +45,10 @@ style_dashboard <- function(prepped_dataframe,
     list(targets = past_due_idx, visible = FALSE))
   
   # define styling for na_replacement
-  na_replace_defs <- get_na_replace_def(config,
-                                        prepped_dataframe)
+  na_replace_defs <- get_na_replace_defs(prepped_dataframe,
+                                         config)
   
+  # combine the two lists
   defs <- append(defs, na_replace_defs)
   
   # create datatable
@@ -127,8 +128,8 @@ true_false_icon <- function(vec) {
 #' 
 #' @export
 
-get_colname_by_type <- function(config,
-                                type = c("icon", "drop_down_fliter")) {
+get_colname_by_type <- function(type = c("icon", "drop_down_fliter"),
+                                config) {
   
   # get all elements with 'type'
   type_list <- purrr::map(config, "type")
@@ -172,8 +173,8 @@ get_na_replace_colnames <- function(config) {
 #' 
 #' @export
 
-get_na_replace_def <- function(config,
-                               prepped_dataframe) {
+get_na_replace_defs <- function(prepped_dataframe,
+                                config) {
   
   # get na_replace columns
   na_replace_cols <- get_na_replace_colnames(config)

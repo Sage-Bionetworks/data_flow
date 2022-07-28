@@ -4,12 +4,12 @@
 \alias{get_colname_by_type}
 \title{Parse config to get columns types}
 \usage{
-get_colname_by_type(config, type = c("icon", "drop_down_fliter"))
+get_colname_by_type(type = c("icon", "drop_down_fliter"), config)
 }
 \arguments{
-\item{config}{datatable_dashboard_config.json as a datatable (`jsonlite::read_json("inst/datatable_dashboard_config.json")`)}
-
 \item{type}{column type as described in datatable_dashboard_config.json}
+
+\item{config}{datatable_dashboard_config.json as a datatable (`jsonlite::read_json("inst/datatable_dashboard_config.json")`)}
 }
 \description{
 Parse config to get columns types
