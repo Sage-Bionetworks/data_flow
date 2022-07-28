@@ -7,9 +7,9 @@
 dt_replace_na(col_index, na_replacement)
 }
 \arguments{
-\item{df}{A dataframe with the columns `Contributor`, `Dataset_Name`, `Dataset_Type`, `Num_Items`, `Release_Scheduled`, `Embargo`, `Standard_Compliance`, `QC_Compliance`,`PHI_Detection_Compliance`, `Access_Controls_Compliance`, `Data_Portal`, `Released`, `past_due`}
+\item{col_index}{target columns index}
 
-\item{parsed_config}{updated config output by `parse_config()`}
+\item{na_replacement}{text to replace NA}
 }
 \description{
 NA replacement - datatable custom JS
