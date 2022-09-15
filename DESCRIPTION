@@ -1,5 +1,5 @@
 Package: data_flow
-Title: PKG_TITLE
+Title: Data Flow App
 Version: 0.0.0.9000
 Authors@R: person('L', 'Wolfe', email = 'loren.wolfe@sagebase.org', role = c('cre', 'aut'))
 Description: PKG_DESC.
