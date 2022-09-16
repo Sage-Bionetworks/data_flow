@@ -41,3 +41,13 @@ test_that("manifest_download returns json", {
 
 # test schematic api wrapper functions
 
+test_that("manifest_download_to_df returns a dataframe", {
+  skip_it()
+  mdf <- manifest_download_to_df(input_token=Sys.getenv("schematicToken"),
+                                asset_view="syn23643253",
+                                dataset_id="syn34640850")
+  
+  mdf_class <- class(mdf)
+  
+  expect_equal(mdf_class, "data.frame")
+})
