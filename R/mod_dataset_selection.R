@@ -77,13 +77,15 @@ mod_dataset_selection_server <- function(id,
       # remove specified datasets from being shown 
       if (!is.null(hidden_datasets)) {
        
-        dfs_idx <- match(hidden_datasets, dataset_df$name)
+        idx <- match(hidden_datasets, dataset_df$name)
         
-        dataset_df <- dataset_df[-(dfs_idx),] 
+        # check that specified hidden project exists before attempting subset
+        if (!is.na(idx)) {
+          dataset_df <- dataset_df[-(idx),] 
+        }
       }
        
       dplyr::select(dataset_df, name, id)
-       
        
     })
     
