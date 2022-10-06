@@ -46,6 +46,7 @@ app_server <- function( input, output, session ) {
   
   select_storage_project <- mod_select_storage_project_server(id = "select_storage_project_1",
                                                               asset_view = global_config$asset_view,
+                                                              hidden_storage_projects = "HTAN All Projects",
                                                               input_token = global_config$schematic_token)
   
   # DATASET SELECTION

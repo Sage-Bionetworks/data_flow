@@ -29,7 +29,7 @@ mod_select_storage_project_ui <- function(id){
 # Storage Project Selection Module Server
 #'
 #' @noRd 
-mod_select_storage_project_server <- function(id, asset_view, input_token) {
+mod_select_storage_project_server <- function(id, asset_view, hidden_storage_projects, input_token) {
   
   moduleServer( id, function(input, output, session){
     
@@ -48,6 +48,20 @@ mod_select_storage_project_server <- function(id, asset_view, input_token) {
   
     # reorder and add to reactive values
     storage_project_df <- dplyr::select(storage_project_df, name, id)
+    
+    
+    # HIDE STORAGE PROJECTS 
+    
+    # remove specified datasets from being shown 
+    if (!is.null(hidden_storage_projects)) {
+      
+      idx <- match(hidden_storage_projects, storage_project_df$name)
+      
+      # check that specified hidden project exists before attempting subset
+      if (!is.na(idx)) {
+        storage_project_df <- storage_project_df[-(idx),] 
+      }
+    }
     
     # DROP DOWN LISTING STORAGE PROJECTS ####################################################################
     
