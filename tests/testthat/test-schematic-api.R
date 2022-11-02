@@ -1,40 +1,31 @@
 # adapted from afwillia's work on data_curator 
 # (https://github.com/Sage-Bionetworks/data_curator/blob/schematic-rest-api/tests/testthat/test_schematic_rest_api.R)
 
-# TEST CONFIGURATION ####################################################################
+# SETUP #################################################################################
+# source global vars
+source("./testing_variables.R")
 
-global_config <- try(jsonlite::read_json("../../inst/global.json"), silent = TRUE)
+# local vars
 testing_manifest_path <- "../../inst/testing/synapse_storage_manifest_dataflow.csv"
-expected_manifest_colnames <- c("Component", "contributor", "data_portal", "dataset",
-                                "dataset_name", "embargo", "entityId", "num_items", 
-                                "release_scheduled", "released", "standard_compliance")
+global_config <- try(jsonlite::read_json("../../inst/global.json"), silent = TRUE)
 
-# check schematic url
+# CHECK API URL #########################################################################
 schematic_url <- "http://0.0.0.0:3001/"
 ping <- try(httr::GET(schematic_url), silent = TRUE)
 
-# function that skips test if: 
-#   - schematic url is unavailable
-#   - config is not present
-#   - token isn't greater than 100 characters (not a pat)
-skip_it <- function(ping,
-                    global_config) {
-  
-  if (inherits(ping, "try-error")) {
-    skip(sprintf("schematic server URL unavailable (%s). Is it running locally?", schematic_url))
-  } else if (inherits(global_config, "try-error")) {
-    skip("global_config file is missing.")
-  } else if (nchar(global_config$schematic_token) < 100) {
-    skip("config$schematic_token is not a valid PAT (<100 chars)")
-  }
+# function that skips test if schematic url is unavailable
+
+ping <- try(httr::GET(schem_url), silent = TRUE)
+skip_it <- function(skip=ping) {
+  if (inherits(ping, "try-error")) skip(sprintf("schematic server URL unavailable (%s). Is it running locally?", schem_url)) #nolint
 }
 
 # TEST API ##############################################################################
 
 test_that("storage_projects returns available projects", {
-  skip_it(ping, global_config)
-  sp <- storage_projects(asset_view = "syn23643253", # schematic-main all datasets
-                         input_token = global_config$schematic_token)
+  skip_it()
+  sp <- storage_projects(asset_view = asset_view, # schematic-main all datasets
+                         input_token = input_token)
   
   # if api call to storage_project fails there will be a node variable
   # expect node to be null if storage_projects call goes through
@@ -44,10 +35,10 @@ test_that("storage_projects returns available projects", {
 })
 
 test_that("storage_dataset_files returns some files", {
-  skip_it(ping, global_config)
-  sdf <- storage_dataset_files(asset_view = "syn23643253",
-                               dataset_id = "syn23643250",
-                               input_token = global_config$schematic_token)
+  skip_it()
+  sdf <- storage_dataset_files(asset_view = asset_view,
+                               dataset_id = dataset_id,
+                               input_token = input_token)
   
   # if api call to storage_dataset_files fails there will be a node variable
   # expect node to be null if storage_dataset_files call goes through
@@ -58,10 +49,10 @@ test_that("storage_dataset_files returns some files", {
 })
 
 test_that("manifest_download returns expected dataframe from JSON", {
-  skip_it(ping, global_config)
-  md <- manifest_download(input_token = global_config$schematic_token,
-                          asset_view = "syn23643253",
-                          dataset_id = "syn41850334",
+  skip_it()
+  md <- manifest_download(input_token = input_token,
+                          asset_view = asset_view,
+                          dataset_id = dataset_id,
                           as_json = TRUE)
   
   md_df <- jsonlite::fromJSON(md)
@@ -71,13 +62,13 @@ test_that("manifest_download returns expected dataframe from JSON", {
 
 
 test_that("model_submit successfully uploads DataFlow manifest to synapse", {
-  skip_it(ping, global_config)
+  skip_it()
   submit <- model_submit(data_type = "DataFlow", 
-                         dataset_id = "syn41850334",
-                         input_token = global_config$schematic_token, 
+                         dataset_id = dataset_id,
+                         input_token = input_token, 
                          csv_file = testing_manifest_path,
                          restrict_rules = TRUE,
-                         schema_url = global_config$schema_url)
+                         schema_url = schema_url)
   
   # check that testing manifest synid is returned (indicates that submission completed)
   is_synid <- grepl("syn41850734", submit)
@@ -89,10 +80,10 @@ test_that("model_submit successfully uploads DataFlow manifest to synapse", {
 # TEST API WRAPPER ######################################################################
 
 test_that("manifest_download_to_df returns a dataframe with expected columns", {
-  skip_it(ping, global_config)
-  mdf <- manifest_download_to_df(input_token = global_config$schematic_token,
-                                 asset_view = "syn23643253",
-                                 dataset_id = "syn41850334")
+  skip_it()
+  mdf <- manifest_download_to_df(input_token = input_token,
+                                 asset_view = asset_view,
+                                 dataset_id = dataset_id)
   
   expect_equal(names(mdf), expected_manifest_colnames)
 })
