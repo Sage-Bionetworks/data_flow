@@ -3,6 +3,10 @@
         "col_name": "Contributor",
         "type": "drop_down_filter"
     },
+
+    "entityId": {
+        "col_name": "Synapse ID"
+    },
     
     "dataset_name": {
         "col_name": "Dataset Name"
