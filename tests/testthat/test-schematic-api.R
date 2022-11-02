@@ -3,8 +3,11 @@
 
 # TEST CONFIGURATION ####################################################################
 
-# read in global config
 global_config <- try(jsonlite::read_json("../../inst/global.json"), silent = TRUE)
+testing_manifest_path <- "../../inst/testing/synapse_storage_manifest_dataflow.csv"
+expected_manifest_colnames <- c("Component", "contributor", "data_portal", "dataset",
+                                "dataset_name", "embargo", "entityId", "num_items", 
+                                "release_scheduled", "released", "standard_compliance")
 
 # check schematic url
 schematic_url <- "http://0.0.0.0:3001/"
@@ -30,39 +33,66 @@ skip_it <- function(ping,
 
 test_that("storage_projects returns available projects", {
   skip_it(ping, global_config)
-  sp <- storage_projects(asset_view="syn23643253", # schematic-main all datasets
-                         input_token=global_config$schematic_token)
+  sp <- storage_projects(asset_view = "syn23643253", # schematic-main all datasets
+                         input_token = global_config$schematic_token)
   
-  expect_type(sp, "list")
+  # if api call to storage_project fails there will be a node variable
+  # expect node to be null if storage_projects call goes through
+  node_null <- is.null(sp$node)
+  
+  expect_true(node_null)
 })
 
-test_that("storage_dataset_files returns files", {
+test_that("storage_dataset_files returns some files", {
   skip_it(ping, global_config)
   sdf <- storage_dataset_files(asset_view = "syn23643253",
                                dataset_id = "syn23643250",
-                               input_token=global_config$schematic_token)
+                               input_token = global_config$schematic_token)
   
-  expect_type(sdf, "list")
+  # if api call to storage_dataset_files fails there will be a node variable
+  # expect node to be null if storage_dataset_files call goes through
+  
+  node_null <- is.null(sdf$node)
+  
+  expect_true(node_null)
 })
 
-test_that("manifest_download returns json", {
+test_that("manifest_download returns expected dataframe from JSON", {
   skip_it(ping, global_config)
-  md <- manifest_download(input_token=global_config$schematic_token,
-                          asset_view="syn23643253",
-                          dataset_id="syn34640850",
+  md <- manifest_download(input_token = global_config$schematic_token,
+                          asset_view = "syn23643253",
+                          dataset_id = "syn41850334",
                           as_json = TRUE)
   
-  expect_type(md, "character")
+  md_df <- jsonlite::fromJSON(md)
+  
+  expect_equal(names(md_df), expected_manifest_colnames)
 })
+
+
+test_that("model_submit successfully uploads DataFlow manifest to synapse", {
+  skip_it(ping, global_config)
+  submit <- model_submit(data_type = "DataFlow", 
+                         dataset_id = "syn41850334",
+                         input_token = global_config$schematic_token, 
+                         csv_file = testing_manifest_path,
+                         restrict_rules = TRUE,
+                         schema_url = global_config$schema_url)
+  
+  # check that testing manifest synid is returned (indicates that submission completed)
+  is_synid <- grepl("syn41850734", submit)
+  
+  expect_true(is_synid)
+})
+
 
 # TEST API WRAPPER ######################################################################
 
-test_that("manifest_download_to_df returns a dataframe", {
+test_that("manifest_download_to_df returns a dataframe with expected columns", {
   skip_it(ping, global_config)
-  mdf <- manifest_download_to_df(input_token=Sys.getenv("schematicToken"),
-                                asset_view="syn23643253",
-                                dataset_id="syn34640850")
-  mdf_class <- class(mdf)
+  mdf <- manifest_download_to_df(input_token = global_config$schematic_token,
+                                 asset_view = "syn23643253",
+                                 dataset_id = "syn41850334")
   
-  expect_equal(mdf_class, "data.frame")
+  expect_equal(names(mdf), expected_manifest_colnames)
 })
