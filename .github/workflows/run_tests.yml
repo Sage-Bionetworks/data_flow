@@ -24,8 +24,3 @@ jobs:
         shell: Rscript {0}
         run: |
           devtools::test()
-
-      - name: Show testthat output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
