@@ -7,4 +7,5 @@ jobs:
       - name: Run tests
         shell: Rscript {0}
         run: |
+          install.packages("devtools")
           devtools::test()
