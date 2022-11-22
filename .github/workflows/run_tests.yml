@@ -19,3 +19,8 @@ jobs:
       - name: Install devtools
         run: install.packages("devtools")
         shell: Rscript {0}
+
+      - name: Run tests
+        shell: Rscript {0}
+        run: |
+          devtools::test()
