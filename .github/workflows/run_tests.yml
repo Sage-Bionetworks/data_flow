@@ -1,74 +1,18 @@
-name: devtools-test
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:
-  devtools-test:
+  Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - uses: r-lib/actions/setup-r@v2
-        with:
-          use-public-rspm: true
-
-      - name: Install System Dependencies
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
         run: |
-          sudo apt-get update
-          sudo apt-get install -y pip python3.8-venv libcurl4-openssl-dev
-
-      - name: Create and Activate Python Virtual Environment
-        shell: bash
-        run: |
-          python3 -m venv .venv
-          chmod 755 .venv/bin/activate
-          source .venv/bin/activate
-      
-      - uses: r-lib/actions/setup-renv@v2
-
-      - name: Install Schematic
-        shell: bash
-        run: |
-          source .venv/bin/activate
-          # use 'poetry' to install schematic from the develop branch 
-          pip3 install poetry
-          git clone --single-branch --branch develop https://github.com/Sage-Bionetworks/schematic.git
-          cd schematic
-          poetry build
-          pip3 install dist/schematicpy-1.0.0-py3-none-any.whl
-
-     - name: Set Configurations for Schematic
-        shell: bash
-        run: |
-          source .venv/bin/activate
-          # download data model to the correct location
-          R -e '
-            config <- yaml::yaml.load_file(".github/schematic_config.yml");
-            url  <- config$model$input$download_url;
-            path <- config$model$input$location;
-            system(sprintf("mkdir -p %s", dirname(path)));
-            system(sprintf("wget %s -O %s", url, path));
-          '
-          # overwrite the config.yml in schematic
-          mv -f .github/schematic_config.yml schematic/config.yml
-          # write out configuration files using github secrets
-          echo "${{ secrets.SCHEMATIC_SYNAPSE_CONFIG }}" > schematic/.synapseConfig
-          echo "${{ secrets.SCHEMATIC_SERVICE_ACCT_CREDS }}" > schematic/schematic_service_account_creds.json
-          echo "${{ secrets.SCHEMATIC_CREDS_PATH }}" > schematic/credentials.json
-          echo "${{ secrets.SCHEMATIC_TOKEN_PICKLE }}" | base64 -d > schematic/token.pickle
-      
-      - name: Run schematic API service
-        shell: bash
-        run: |
-          echo "SYNAPSE_PAT='${{ secrets.SYNAPSE_PAT }}'" > .Renviron
-          source .venv/bin/activate
-          cd schematic
-          pip3 uninstall -y markupsafe
-          pip3 install markupsafe==2.0.1
-          python3 run_api.py &
-
-      - name: Run tests
-        shell: Rscript {0}
-        run: |
-          install.packages("devtools")
-          devtools::test()
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
