@@ -9,8 +9,6 @@ name: test-schematic-api
 on:
   push:
     branches:
-      - dev
-      - main
       - gh-actions
 
 jobs:
@@ -18,9 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     # This image seems to be based on rocker/r-ver which in turn is based on debian
     container: rocker/rstudio
-    #env:
+    env:
       # This should not be necessary for installing from public repo's however remotes::install_github() fails without it.
-      #GITHUB_PAT: ${{ secrets.REPO_PAT }}
+      GITHUB_PAT: ${{ secrets.REPO_PAT }}
 
     steps:
       - name: Install System Dependencies
