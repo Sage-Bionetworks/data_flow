@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - gh-actions
+      - dev
 
 jobs:
   test-schematic-rest-api:
