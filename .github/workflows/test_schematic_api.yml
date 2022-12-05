@@ -10,15 +10,17 @@ on:
   push:
     branches:
       - dev
+      - main
+      - gh-actions
 
 jobs:
   test-schematic-rest-api:
     runs-on: ubuntu-latest
     # This image seems to be based on rocker/r-ver which in turn is based on debian
     container: rocker/rstudio
-    env:
+    #env:
       # This should not be necessary for installing from public repo's however remotes::install_github() fails without it.
-      GITHUB_PAT: ${{ secrets.REPO_PAT }}
+      #GITHUB_PAT: ${{ secrets.REPO_PAT }}
 
     steps:
       - name: Install System Dependencies
@@ -37,9 +39,7 @@ jobs:
           chmod 755 .venv/bin/activate
           source .venv/bin/activate
 
-      - name: Install R Packages Dependencies
-        run: |
-          R -f install-pkgs.R
+      - uses: r-lib/actions/setup-renv@v2
 
       - name: Install Schematic
         shell: bash
