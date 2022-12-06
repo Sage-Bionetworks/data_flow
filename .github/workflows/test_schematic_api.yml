@@ -34,7 +34,6 @@ jobs:
       - name: Create and Activate Python Virtual Environment
         shell: bash
         run: |
-          pip install --upgrade pip
           python3 -m venv .venv
           chmod 755 .venv/bin/activate
 
