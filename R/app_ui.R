@@ -29,7 +29,7 @@ ui_function <- function() {
     # green check
     tags$style(".fa-check {color:#58A158}"),
     # red x
-    tags$style(".fa-times {color:#B2242A}"),
+    tags$style(".fa-xmark {color:#B2242A}"),
     
     # Your application UI logic
     

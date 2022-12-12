@@ -68,7 +68,7 @@ true_false_icon <- function(vec) {
   # if true assign checkmark icon
   # if false assign x icon
   true_icon <- as.character(icon("check", lib = "font-awesome"))
-  false_icon <- as.character(icon("times", lib = "font-awesome"))
+  false_icon <- as.character(icon("xmark", lib = "font-awesome"))
   
   ifelse(vec == TRUE, true_icon, false_icon)
 }
