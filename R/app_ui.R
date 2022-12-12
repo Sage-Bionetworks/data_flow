@@ -16,6 +16,18 @@ ui_function <- function() {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     
+    # initialize waiter + use preloader
+    waiter::useWaiter(),
+    waiter::waiterPreloader(
+      
+        html = tagList(
+          img(src = "www/loading.gif"),
+          div(
+            style="color:white;",
+            "Retrieving Synapse information...",
+          )),
+        color="#424874"),
+    
     # define colors for icons in datatable
     # green check
     tags$style(".fa-check {color:#58A158}"),
@@ -108,13 +120,6 @@ ui_function <- function() {
           shinydashboard::tabItem(tabName = "administrator",
                                   
                                   fluidPage(
-
-                                    # initialize waiter + use preloader
-                                    waiter::useWaiter(),
-                                    waiter::waiterPreloader(html = tagList(
-                                      img(src = "www/loading.gif"),
-                                      h4("Retrieving Synapse information...")),
-                                      color = "#424874"),
                                     
                                     mod_select_storage_project_ui("select_storage_project_1"),
                                     
