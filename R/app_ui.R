@@ -22,10 +22,7 @@ ui_function <- function() {
       
         html = tagList(
           img(src = "www/loading.gif"),
-          div(
-            style="color:white;",
-            "Retrieving Synapse information...",
-          )),
+          h4("Retrieving Synapse information...", style = "color:white;")),
         color="#424874"),
     
     # define colors for icons in datatable
