@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - main
-      - develop*
+      - dev*
       - shinyappsio-deployment
 
     paths-ignore:
@@ -97,6 +97,7 @@ jobs:
           if (!startsWith(branch, "release")) {
              appName = paste(appName, "staging", sep="-")
           }
+
           rsConnectUser <-"${{ secrets.RSCONNECT_USER }}"
           rsConnectToken <- "${{ secrets.RSCONNECT_TOKEN }}"
           rsConnectSecret <- "${{ secrets.RSCONNECT_SECRET }}"
