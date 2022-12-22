@@ -80,13 +80,13 @@ jobs:
       #       -schema ${{ env.MODEL_REPO }} \
       #       -service 'Sage-Bionetworks/schematic'
   
-      # - name: zip virtual env
-      #   shell: bash
+      - name: zip virtual env
+        shell: bash
         # ShinyApps has a limit of 7000 files, far exceeded by the many Python dependencies
         # that this app' has.  As a workaround we zip the virtual environment and later
         # unzip it in 'global.R'
-        # run: |
-        #   zip -rm .venv.zip .venv
+        run: |
+          zip -rm .venv.zip .venv
 
       - name: Authorize and deploy app
         run: |
