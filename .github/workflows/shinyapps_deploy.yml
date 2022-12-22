@@ -91,7 +91,6 @@ jobs:
       - name: Authorize and deploy app
         run: |
           install.packages("rsconnect")
-          install.packages("reticulate")
           branch<-Sys.getenv("GITHUB_REF_NAME")
           repo<-Sys.getenv("GITHUB_REPOSITORY")
           appName<-strsplit(repo, "/")[[1]][2]
