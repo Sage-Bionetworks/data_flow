@@ -18,6 +18,7 @@ Imports:
     magrittr,
     pkgload,
     processx,
+    reticulate,
     shiny (>= 1.7.1),
     shinydashboard,
     shinydashboardPlus,
