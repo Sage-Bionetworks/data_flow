@@ -18,4 +18,4 @@ if (interactive()) {
   options(shiny.port = 3978)
 } 
 
-OAUTH_LIST <- projectlive.modules::create_oauth_list("inst/oauth_config.yml")
+OAUTH_LIST <- projectlive.modules::create_oauth_list("oauth_config.yml")
