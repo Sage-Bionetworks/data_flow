@@ -18,4 +18,6 @@ if (interactive()) {
   options(shiny.port = 3001)
 }
 
+message(Sys.getenv())
+
 OAUTH_LIST <- projectlive.modules::create_oauth_list("./oauth_config.yml")
