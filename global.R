@@ -15,7 +15,7 @@ reticulate::use_virtualenv(file.path(getwd(), ".venv"), required = TRUE)
 
 # set shiny port
 if (interactive()) {
-  options(shiny.port = 3001)
+  options(shiny.port = 2819)
 }
 
 message(Sys.getenv())
