@@ -20,4 +20,4 @@ if (interactive()) {
 
 message(Sys.getenv())
 
-OAUTH_LIST <- projectlive.modules::create_oauth_list("./oauth_config.yml")
+OAUTH_LIST <- projectlive.modules::create_oauth_list("oauth_config.yml")
