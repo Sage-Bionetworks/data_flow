@@ -16,6 +16,13 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
 
+      - name: Create and Activate Python Virtual Environment
+        shell: bash
+        run: |
+          python3 -m venv .venv
+          chmod 755 .venv/bin/activate
+          source .venv/bin/activate
+
       - name: Run tests
         shell: Rscript {0}
         run: |
