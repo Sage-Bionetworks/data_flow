@@ -14,20 +14,14 @@ jobs:
         with:
           use-public-rspm: true
 
+      - uses: r-lib/actions/setup-renv@v2
+
       - name: Create and Activate Python Virtual Environment
         shell: bash
         run: |
           python3 -m venv .venv
           chmod 755 .venv/bin/activate
           source .venv/bin/activate
-        
-      - name: Install Python Dependencies
-        shell: bash
-        run: |
-          source .venv/bin/activate
-          pip3 install synapseclient
-
-      - uses: r-lib/actions/setup-renv@v2
 
       - name: Run tests
         shell: Rscript {0}
