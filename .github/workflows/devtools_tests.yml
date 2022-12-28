@@ -22,6 +22,20 @@ jobs:
           python3 -m venv .venv
           chmod 755 .venv/bin/activate
           source .venv/bin/activate
+            
+      - name: Create Oauth Config
+        shell: Rscript {0}
+        run: |
+          config <- "client_id: ${{ secrets.OAUTH_CLIENT_ID }}"
+          config <- c(config, "client_secret: ${{ secrets.OAUTH_CLIENT_SECRET }}")
+          appUrl<- sprintf("https://%s.shinyapps.io/%s", rsConnectUser, appName)
+          config <- c(config, sprintf("app_url: %s", appUrl))
+         
+          configFileConn<-file("oauth_config.yml")
+          tryCatch(
+             writeLines(config, configFileConn),
+             finally=close(configFileConn)
+          )
 
       - name: Run tests
         shell: Rscript {0}
