@@ -64,20 +64,6 @@ jobs:
           echo "${{ secrets.SCHEMATIC_SERVICE_ACCT_CREDS }}" > schematic_service_account_creds.json
           echo "${{ secrets.SCHEMATIC_CREDS_PATH }}" > credentials.json
           echo "${{ secrets.SCHEMATIC_TOKEN_PICKLE }}" | base64 -d > token.pickle
-
-      # - name: Clone Data Model
-      #   shell: bash
-      #   run: |
-      #     git clone https://github.com/${{ env.MODEL_REPO }}.git
-
-      # - name: Create config.json
-      #   shell: bash
-      #   run: |
-      #     source .venv/bin/activate
-      #     python3 .github/generate_config_json.py \
-      #       -jd ${{ env.MODEL_PATH }} \
-      #       -schema ${{ env.MODEL_REPO }} \
-      #       -service 'Sage-Bionetworks/schematic'
   
       - name: zip virtual env
         shell: bash
