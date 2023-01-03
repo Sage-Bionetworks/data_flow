@@ -21,7 +21,7 @@ manifest_download <- function(asset_view,
                               input_token,
                               as_json,
                               new_manifest_name = NULL,
-                              url="http://localhost:3001/v1/manifest/download") {
+                              url="https://schematic.dnt-dev.sagebase.org/v1/manifest/download") {
   
   # set up parameters for httr::get call
   params = list(
@@ -60,7 +60,7 @@ manifest_download <- function(asset_view,
 manifest_generate <- function(title, 
                               data_type,
                               dataset_id,
-                              url="http://localhost:3001/v1/manifest/generate",
+                              url="https://schematic.dnt-dev.sagebase.org/v1/manifest/generate",
                               schema_url="https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld", #nolint
                               oauth="true",
                               use_annotations="false") {
@@ -92,7 +92,7 @@ manifest_generate <- function(title,
 manifest_populate <- function(data_type, 
                               title, 
                               csv_file,
-                              url="http://localhost:3001/v1/manifest/populate",
+                              url="https://schematic.dnt-dev.sagebase.org/v1/manifest/populate",
                               schema_url="https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld") {
   
   req <- httr::POST(url,
@@ -120,7 +120,7 @@ manifest_populate <- function(data_type,
 
 manifest_validate <- function(data_type, 
                               csv_file,
-                              url="http://localhost:3001/v1/model/validate",
+                              url="https://schematic.dnt-dev.sagebase.org/v1/model/validate",
                               schema_url="https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld") {
   
   req <- httr::POST(url,
@@ -155,7 +155,7 @@ model_submit <- function(data_type,
                          csv_file,
                          input_token,
                          manifest_record_type = "table",
-                         url="http://localhost:3001/v1/model/submit",
+                         url="https://schematic.dnt-dev.sagebase.org/v1/model/submit",
                          schema_url="https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld") {
 
   headers = c(
@@ -176,7 +176,7 @@ model_submit <- function(data_type,
     `csv_file` = httr::upload_file(csv_file)
   )
   
-  req <- httr::POST(url = 'http://localhost:3001/v1/model/submit', httr::add_headers(.headers=headers), query = params, body = files, encode = 'multipart')
+  req <- httr::POST(url = 'https://schematic.dnt-dev.sagebase.org/v1/model/submit', httr::add_headers(.headers=headers), query = params, body = files, encode = 'multipart')
   
   manifest_id <- httr::content(req)
   manifest_id
@@ -196,7 +196,7 @@ model_submit <- function(data_type,
 storage_project_datasets <- function(asset_view,
                                      project_id,
                                      input_token,
-                                     url="http://localhost:3001/v1/storage/project/datasets") {
+                                     url="https://schematic.dnt-dev.sagebase.org/v1/storage/project/datasets") {
   
   req <- httr::GET(url,
                    #add_headers(Authorization=paste0("Bearer ", pat)),
@@ -219,7 +219,7 @@ storage_project_datasets <- function(asset_view,
 
 storage_projects <- function(asset_view,
                              input_token,
-                             url="http://localhost:3001/v1/storage/projects") {
+                             url="https://schematic.dnt-dev.sagebase.org/v1/storage/projects") {
   
   req <- httr::GET(url,
                    query = list(
@@ -242,7 +242,7 @@ storage_projects <- function(asset_view,
 storage_project_manifests <- function(asset_view,
                                       project_id,
                                       input_token,
-                                      url="http://localhost:3001/v1/storage/project/manifests") {
+                                      url="https://schematic.dnt-dev.sagebase.org/v1/storage/project/manifests") {
   
   require(httr)
   
@@ -278,7 +278,7 @@ storage_dataset_files <- function(asset_view,
                                   input_token,
                                   file_names=list(),
                                   full_path=FALSE, 
-                                  url="http://localhost:3001/v1/storage/dataset/files") {
+                                  url="https://schematic.dnt-dev.sagebase.org/v1/storage/dataset/files") {
   
   req <- httr::GET(url,
                    #add_headers(Authorization=paste0("Bearer ", pat)),
