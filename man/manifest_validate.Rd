@@ -7,7 +7,7 @@
 manifest_validate(
   data_type,
   csv_file,
-  url = "http://localhost:3001/v1/model/validate",
+  url = "https://schematic.dnt-dev.sagebase.org/v1/model/validate",
   schema_url =
     "https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld"
 )

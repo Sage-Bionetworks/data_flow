@@ -8,7 +8,7 @@ manifest_populate(
   data_type,
   title,
   csv_file,
-  url = "http://localhost:3001/v1/manifest/populate",
+  url = "https://schematic.dnt-dev.sagebase.org/v1/manifest/populate",
   schema_url =
     "https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld"
 )

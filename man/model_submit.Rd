@@ -6,14 +6,15 @@
 \usage{
 model_submit(
   data_type,
+  asset_view,
   dataset_id,
   restrict_rules,
-  csv_file,
+  file_name,
   input_token,
   manifest_record_type = "table",
-  url = "http://localhost:3001/v1/model/submit",
+  url = "https://schematic.dnt-dev.sagebase.org/v1/model/submit",
   schema_url =
-    "https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld"
+    "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/dev/inst/data_flow_component.jsonld"
 )
 }
 \arguments{
@@ -23,8 +24,6 @@ model_submit(
 
 \item{restrict_rules}{If True, validation suite will only run with in-house validation rule. If False, the Great Expectations suite will be utilized and all rules will be available.}
 
-\item{csv_file}{Filepath of csv to validate}
-
 \item{input_token}{Synapse login cookie, PAT, or API key}
 
 \item{manifest_record_type}{Manifest storage type. Options: "--", "table" (default), "entity", "both".}
@@ -32,6 +31,8 @@ model_submit(
 \item{url}{URL to schematic API endpoint}
 
 \item{schema_url}{URL to a schema jsonld}
+
+\item{csv_file}{Filepath of csv to validate}
 }
 \value{
 TRUE if successful upload or validate errors if not.
