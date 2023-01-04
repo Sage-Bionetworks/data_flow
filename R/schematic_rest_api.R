@@ -150,13 +150,14 @@ manifest_validate <- function(data_type,
 #' @export
 
 model_submit <- function(data_type, 
+                         asset_view,
                          dataset_id,
                          restrict_rules,
-                         csv_file,
+                         file_name,
                          input_token,
                          manifest_record_type = "table",
                          url="https://schematic.dnt-dev.sagebase.org/v1/model/submit",
-                         schema_url="https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld") {
+                         schema_url="https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/dev/inst/data_flow_component.jsonld") {
 
   headers = c(
     `accept` = 'application/json',
@@ -169,14 +170,19 @@ model_submit <- function(data_type,
     `dataset_id` = dataset_id,
     `manifest_record_type` = manifest_record_type,
     `restrict_rules` = restrict_rules,
+    `asset_view` = asset_view,
     `input_token` = input_token
   )
   
   files = list(
-    `csv_file` = httr::upload_file(csv_file)
+    `file_name` = httr::upload_file(file_name)
   )
   
-  req <- httr::POST(url = 'https://schematic.dnt-dev.sagebase.org/v1/model/submit', httr::add_headers(.headers=headers), query = params, body = files, encode = 'multipart')
+  req <- httr::POST(url = url,
+                    httr::add_headers(.headers=headers), 
+                    query = params, 
+                    body = files, 
+                    encode = 'multipart')
   
   manifest_id <- httr::content(req)
   manifest_id
