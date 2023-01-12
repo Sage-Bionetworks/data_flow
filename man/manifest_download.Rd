@@ -10,7 +10,7 @@ manifest_download(
   input_token,
   as_json,
   new_manifest_name = NULL,
-  url = "http://localhost:3001/v1/manifest/download"
+  url = "https://schematic.dnt-dev.sagebase.org/v1/manifest/download"
 )
 }
 \arguments{

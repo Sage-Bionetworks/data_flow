@@ -6,25 +6,13 @@
 asset_view <- "syn23643253"
 storage_project_id <- "syn23643250"
 dataset_id <- "syn41850334"
-input_token <- Sys.getenv("schematicToken")
+input_token <- Sys.getenv("SYNAPSE_PAT")
 schema_url <- "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/43fe7b8d1b649ff9debc5501ef62b3cf108f3eec/inst/data_flow_component.jsonld"
 testing_manifest_path <- "../../inst/testing/synapse_storage_manifest_dataflow.csv"
-
-# CHECK API URL #########################################################################
-schematic_url <- "http://0.0.0.0:3001/"
-ping <- try(httr::GET(schematic_url), silent = TRUE)
-
-# function that skips test if schematic url is unavailable
-
-ping <- try(httr::GET(schematic_url), silent = TRUE)
-skip_it <- function(skip=ping) {
-  if (inherits(ping, "try-error")) skip(sprintf("schematic server URL unavailable (%s). Is it running locally?", schematic_url)) #nolint
-}
 
 # TEST API ##############################################################################
 
 test_that("storage_projects returns expected projects", {
-  skip_it()
   sp <- storage_projects(asset_view = asset_view, # schematic-main all datasets
                          input_token = input_token)
   
@@ -38,7 +26,6 @@ test_that("storage_projects returns expected projects", {
 })
 
 test_that("storage_dataset_files returns files", {
-  skip_it()
   sdf <- storage_dataset_files(asset_view = asset_view,
                                dataset_id = storage_project_id,
                                input_token = input_token)
@@ -53,7 +40,6 @@ test_that("storage_dataset_files returns files", {
 })
 
 test_that("manifest_download returns expected dataframe from JSON", {
-  skip_it()
   md <- manifest_download(input_token = input_token,
                           asset_view = asset_view,
                           dataset_id = dataset_id,
@@ -87,7 +73,6 @@ test_that("manifest_download returns expected dataframe from JSON", {
 # TEST API WRAPPER ######################################################################
 
 test_that("manifest_download_to_df returns a dataframe with expected columns", {
-  skip_it()
   mdf <- manifest_download_to_df(input_token = input_token,
                                  asset_view = asset_view,
                                  dataset_id = dataset_id)

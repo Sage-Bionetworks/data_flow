@@ -10,7 +10,7 @@ storage_dataset_files(
   input_token,
   file_names = list(),
   full_path = FALSE,
-  url = "http://localhost:3001/v1/storage/dataset/files"
+  url = "https://schematic.dnt-dev.sagebase.org/v1/storage/dataset/files"
 )
 }
 \arguments{

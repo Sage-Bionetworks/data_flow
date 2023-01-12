@@ -22,6 +22,7 @@ mod_submit_model_ui <- function(id){
 mod_submit_model_server <- function(id, 
                                     dfs_manifest,
                                     data_type,
+                                    asset_view,
                                     dataset_id,
                                     manifest_dir = "./manifest",
                                     input_token,
@@ -43,7 +44,7 @@ mod_submit_model_server <- function(id,
         h4("Submitting updated manifest to Synapse...")))
       
       # write manifest table for upload
-      path <- file.path(manifest_dir, "data_flow_status_manifest.csv")
+      path <- file.path(manifest_dir, "synapse_storage_manifest_dataflow.csv")
       
       write.table(dfs_manifest(),
                   path,
@@ -52,12 +53,13 @@ mod_submit_model_server <- function(id,
       
       # submit model to synapse
       model_submit(data_type = data_type,
+                   asset_view = asset_view,
                    dataset_id = dataset_id,
                    restrict_rules = TRUE,
-                   csv_file = path,
+                   file_name = path,
                    input_token = input_token,
                    manifest_record_type = "table",
-                   url = "http://localhost:3001/v1/model/submit",
+                   url = "https://schematic.dnt-dev.sagebase.org/v1/model/submit",
                    schema_url = schema_url)
       
       waiter::waiter_hide()
