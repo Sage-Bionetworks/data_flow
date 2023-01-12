@@ -108,7 +108,8 @@ update_dfs_manifest <- function(dfs_manifest,
 generate_data_flow_manifest_skeleton <- function(storage_project_list,
                                                  asset_view,
                                                  input_token,
-                                                 calc_num_items) {
+                                                 calc_num_items,
+                                                 .url = "https://schematic.dnt-dev.sagebase.org/v1/storage/project/manifests") {
   
   # parse storage project list
   storage_project_names <- purrr::map_chr(storage_project_list, 2)
@@ -125,7 +126,8 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
     
     manifests <- storage_project_manifests(asset_view,
                                            storage_project_ids[i],
-                                           input_token)
+                                           input_token,
+                                           .url)
     
     # pull out data from list
     # dataset metadata
@@ -138,7 +140,7 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
     dataset_component_metadata <- purrr::map(manifests, 3)
     
     # pull together in a dataframe
-    data.frame(Component = "DataFlow",
+    data.frame(Component = rep("DataFlow", length(dataset_naming_metadata)),
                contributor = rep(storage_project_names[i], length(dataset_naming_metadata)),
                entity_id = purrr::map_chr(dataset_naming_metadata, 1),
                dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
@@ -191,6 +193,11 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
   dfs_manifest$standard_compliance <- rep(FALSE, nrow(dfs_manifest))
   dfs_manifest$data_portal <- rep(FALSE, nrow(dfs_manifest))
   dfs_manifest$released <- rep(FALSE, nrow(dfs_manifest))
+  
+  
+  ## FIX DATA TYPE FOR NO MANIFEST
+  # FIXME: once schematic error is fixed this can be removed
+  dfs_manifest$dataset[dfs_manifest$manifest_synid == ""] <- ""
   
   # update empty cells to "Not Applicable"
   dfs_manifest[ dfs_manifest == "" ] <- "Not Applicable"
