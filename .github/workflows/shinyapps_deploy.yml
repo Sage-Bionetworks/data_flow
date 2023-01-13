@@ -1,0 +1,117 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/master/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+
+name: shiny-deploy
+
+on:
+  push:
+    branches:
+      - main
+      - dev*
+      - v[0-9]+.[0-9]+.[0-9]+
+      - demo-instance
+
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
+      - '**/*.md'
+      - '**/.gitignore'
+
+jobs:
+  shiny-deploy:
+    runs-on: ubuntu-latest
+    # This image seems to be based on rocker/r-ver which in turn is based on debian
+    container: rocker/rstudio:4.1.2
+    env:
+      # This should not be necessary for installing from public repo's however remotes::install_github() fails without it.
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pip python3.8-venv libcurl4-openssl-dev libpng-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libtiff-dev libxml2-dev
+      
+      - uses: actions/checkout@v3
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Create and Activate Python Virtual Environment
+        shell: bash
+        run: |
+          python3 -m venv .venv
+          chmod 755 .venv/bin/activate
+          source .venv/bin/activate
+      
+      - uses: r-lib/actions/setup-renv@v2
+
+      - name: Install Schematic
+        shell: bash
+        run: |
+          # has to activate each bash step
+          source .venv/bin/activate
+          pip3 install poetry
+          echo Installing develop branch of schematic from github
+          git clone --single-branch --branch develop https://github.com/Sage-Bionetworks/schematic.git
+          cp .github/schematic_config.yml schematic/config.yml
+          cd schematic
+          poetry build
+          pip3 install dist/schematicpy-1.0.0-py3-none-any.whl
+          schematic --help
+
+
+      - name: Set Configurations
+        shell: bash
+        run: |
+          # write out configuration files using github secrets
+          echo "${{ secrets.SCHEMATIC_SYNAPSE_CONFIG }}" > .synapseConfig
+          echo "${{ secrets.SCHEMATIC_SERVICE_ACCT_CREDS }}" > schematic_service_account_creds.json
+          echo "${{ secrets.SCHEMATIC_CREDS_PATH }}" > credentials.json
+          echo "${{ secrets.SCHEMATIC_TOKEN_PICKLE }}" | base64 -d > token.pickle
+  
+      - name: zip virtual env
+        shell: bash
+        # ShinyApps has a limit of 7000 files, far exceeded by the many Python dependencies
+        # that this app' has.  As a workaround we zip the virtual environment and later
+        # unzip it in 'global.R'
+        run: |
+          zip -rm .venv.zip .venv
+
+      - name: Authorize and deploy app
+        run: |
+          install.packages("rsconnect")
+          refName <- Sys.getenv("GITHUB_REF_NAME")
+          repo <- Sys.getenv("GITHUB_REPOSITORY")
+          appName <- strsplit(repo, "/")[[1]][2]
+
+          # if tag is v*.*.*, deploy to prod, if main to staging, otherwise to test
+          if (grepl("v[0-9]+.[0-9]+.[0-9]+", refName)) {
+            message("Deploying release version of app")
+          } else if (refName == "main") {
+            appName <- paste(appName, "staging", sep = "-")
+            message("Deploying staging version of app")
+          } else {
+            appName <- paste(appName, "testing", sep = "-")
+            message("Deploying testing version of app")
+          }
+
+          message(sprintf("Deploying to %s instance.", appName))
+
+          rsConnectUser <-"${{ secrets.RSCONNECT_USER }}"
+          rsConnectToken <- "${{ secrets.RSCONNECT_TOKEN }}"
+          rsConnectSecret <- "${{ secrets.RSCONNECT_SECRET }}"
+ 
+          # create config file
+          config <- "client_id: ${{ secrets.OAUTH_CLIENT_ID }}"
+          config <- c(config, "client_secret: ${{ secrets.OAUTH_CLIENT_SECRET }}")
+          appUrl<- sprintf("https://%s.shinyapps.io/%s", rsConnectUser, appName)
+          config <- c(config, sprintf("app_url: %s", appUrl))
+         
+          configFileConn<-file("oauth_config.yml")
+          tryCatch(
+             writeLines(config, configFileConn),
+             finally=close(configFileConn)
+          )
+ 
+          rsconnect::setAccountInfo(rsConnectUser, rsConnectToken, rsConnectSecret)
+          rsconnect::deployApp(appName = appName)
+        shell: Rscript {0}
