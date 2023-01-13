@@ -8,8 +8,8 @@ reticulate::use_virtualenv(file.path(getwd(),venv_name), required = TRUE)
 
 
 if (interactive()) {
-  options(shiny.port = 3978,
+  options(shiny.port = 8100,
           launch.browser = T)
 } 
 
-OAUTH_LIST <- projectlive.modules::create_oauth_list("inst/oauth_config.yml")
+OAUTH_LIST <- projectlive.modules::create_oauth_list("oauth_config.yml")
