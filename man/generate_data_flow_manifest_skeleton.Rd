@@ -8,7 +8,8 @@ generate_data_flow_manifest_skeleton(
   storage_project_list,
   asset_view,
   input_token,
-  calc_num_items
+  calc_num_items,
+  .url = "https://schematic.dnt-dev.sagebase.org/v1/storage/project/manifests"
 )
 }
 \arguments{
