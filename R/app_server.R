@@ -41,7 +41,7 @@ app_server <- function( input, output, session ) {
     # add some columns to manifest to make logic easier
     manifest <- manifest_dfa %>%
       dplyr::mutate(scheduled = !is.na(release_scheduled),
-                    no_embargo = is.na(embargo) || embargo < Sys.chmod(),
+                    no_embargo = is.na(embargo) || embargo < Sys.Date(),
                     past_due = !is.na(release_scheduled) && release_scheduled < Sys.Date())
     
     # generate status variable based on some logic that defines various data flow statuses
