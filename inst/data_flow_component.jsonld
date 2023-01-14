@@ -2052,6 +2052,7 @@
                 "@id": "http://schema.biothings.io"
             },
             "sms:displayName": "entityId",
+
             "sms:required": "sms:true",
             "sms:validationRules": []
         },

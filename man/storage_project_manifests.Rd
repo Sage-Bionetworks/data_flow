@@ -8,7 +8,7 @@ storage_project_manifests(
   asset_view,
   project_id,
   input_token,
-  url = "http://localhost:3001/v1/storage/project/manifests"
+  url = "https://schematic.dnt-dev.sagebase.org/v1/storage/project/manifests"
 )
 }
 \arguments{

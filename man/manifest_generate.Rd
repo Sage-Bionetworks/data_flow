@@ -8,7 +8,7 @@ manifest_generate(
   title,
   data_type,
   dataset_id,
-  url = "http://localhost:3001/v1/manifest/generate",
+  url = "https://schematic.dnt-dev.sagebase.org/v1/manifest/generate",
   schema_url =
     "https://raw.githubusercontent.com/ncihtan/data-models/main/HTAN.model.jsonld",
   oauth = "true",

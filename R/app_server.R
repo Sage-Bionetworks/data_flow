@@ -278,6 +278,7 @@ app_server <- function( input, output, session ) {
   mod_submit_model_server("submit_model_1",
                           dfs_manifest = manifest_submit,
                           data_type = "DataFlow",
+                          asset_view = global_config$asset_view,
                           dataset_id = global_config$manifest_dataset_id,
                           manifest_dir = "./manifest",
                           input_token = access_token,
