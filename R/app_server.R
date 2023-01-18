@@ -41,7 +41,7 @@ app_server <- function( input, output, session ) {
     # add some columns to manifest to make logic easier
     manifest <- manifest_dfa %>%
       dplyr::mutate(scheduled = !is.na(release_scheduled),
-                    no_embargo = is.na(embargo) || embargo < Sys.chmod(),
+                    no_embargo = is.na(embargo) || embargo < Sys.Date(),
                     past_due = !is.na(release_scheduled) && release_scheduled < Sys.Date())
     
     # generate status variable based on some logic that defines various data flow statuses
@@ -278,6 +278,7 @@ app_server <- function( input, output, session ) {
   mod_submit_model_server("submit_model_1",
                           dfs_manifest = manifest_submit,
                           data_type = "DataFlow",
+                          asset_view = global_config$asset_view,
                           dataset_id = global_config$manifest_dataset_id,
                           manifest_dir = "./manifest",
                           input_token = access_token,

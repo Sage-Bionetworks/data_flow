@@ -7,7 +7,7 @@
 storage_projects(
   asset_view,
   input_token,
-  url = "http://localhost:3001/v1/storage/projects"
+  url = "https://schematic.dnt-dev.sagebase.org/v1/storage/projects"
 )
 }
 \arguments{
