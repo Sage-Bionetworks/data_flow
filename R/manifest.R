@@ -142,7 +142,7 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
     # pull together in a dataframe
     data.frame(Component = rep("DataFlow", length(dataset_naming_metadata)),
                contributor = rep(storage_project_names[i], length(dataset_naming_metadata)),
-               entity_id = purrr::map_chr(dataset_naming_metadata, 1),
+               entityId = purrr::map_chr(dataset_naming_metadata, 1),
                dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
                dataset = purrr::map_chr(dataset_component_metadata, 1),
                manifest_synid = purrr::map_chr(dataset_manifest_metadata, 1))
@@ -157,7 +157,7 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
     num_items <- sapply(1:nrow(dfs_manifest), function(i) {
       
       contributor <- dfs_manifest[i, "contributor"]
-      entity_id <- dfs_manifest[i, "entity_id"]
+      entity_id <- dfs_manifest[i, "entityId"]
       message(glue::glue("Retrieving manifest: {contributor} {entity_id}"))
       
       # dataset == "" indicates that there is no manifest
@@ -166,7 +166,7 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
       } else {
         # download manifest
         manifest <- manifest_download_to_df(asset_view,
-                                            dfs_manifest[i, "entity_id"],
+                                            dfs_manifest[i, "entityId"],
                                             input_token)
         
         # if no manifest is downloaded, return NA
