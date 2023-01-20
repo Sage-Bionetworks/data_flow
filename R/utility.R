@@ -15,9 +15,11 @@ list_to_dataframe <- function(list,
   # convert list to dataframe
   df <- data.frame(do.call(rbind, list))
   
-  # for some reason the columns of this df are class = list
-  # this hasn't really caused a problem, but I want class = char
-  df <- data.frame(apply(df, 2, unlist))
+  if (length(list) != 1){
+    # for some reason the columns of this df are class = list
+    # this hasn't really caused a problem, but I want class = char
+    df <- data.frame(apply(df, 2, unlist))
+  }
   
   # if colnames are specified, add them
   if (!is.null(col_names)) {
