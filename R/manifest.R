@@ -96,92 +96,114 @@ update_dfs_manifest <- function(dfs_manifest,
   return(dfs_manifest)
 }
 
-#' Generate a data flow status manifest. Fills in the component, contributor, data type, and dataset name columns.
+#' Generate a data flow status manifest skeleton. Fills in the component, contributor, data type, number of items, and dataset name columns.
+#' 
+#' @param storage_project_list List output from `storage_projects` schematic endpoint
+#' @param asset_view ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)
+#' @param dataset_id Synapse ID of existing manifest
+#' @param calc_num_items TRUE/FALSE. Calculate the number of items in each manifest.
 #' 
 #' @export
 
-generate_data_flow_manifest <- function(storage_project_id,
-                                        asset_view,
-                                        input_token,
-                                        contributor = NULL,
-                                        calc_num_items = FALSE,
-                                        testing = FALSE) {
+generate_data_flow_manifest_skeleton <- function(storage_project_list,
+                                                 asset_view,
+                                                 input_token,
+                                                 calc_num_items,
+                                                 .url = "https://schematic.dnt-dev.sagebase.org/v1/storage/project/manifests") {
   
-  # get all manifests for storage_project
-  message(glue::glue("Building data flow status manifest for {storage_project_id}"))
-  message("Getting all manifests")
-  all_manifests_list <- storage_project_manifests(asset_view, 
-                                                  storage_project_id, 
-                                                  input_token)
+  # parse storage project list
+  storage_project_names <- purrr::map_chr(storage_project_list, 2)
+  storage_project_ids <- purrr::map_chr(storage_project_list, 1)
   
-  # pull out data from list
-  # dataset metadata
-  dataset_naming_metadata <- purrr::map(all_manifests_list, 1)
-  dataset_ids <- purrr::map_chr(dataset_naming_metadata, 1)
-  dataset_names <- purrr::map_chr(dataset_naming_metadata, 2)
+  message(paste0("Generating data flow status manifest with ", length(storage_project_ids), " storage project(s)"))
   
-  # component metadata
-  dataset_component_metadata <- purrr::map(all_manifests_list, 3)
-  dataset <- purrr::map_chr(dataset_component_metadata, 1)
-  
-  # calculate number of items
-  # pull down each manifest and count each row (1 file / row)
-  if (calc_num_items) {
-    message("Counting items in each manifest")
-    num_items_list <- lapply(dataset_ids, function(id) {
-      manifest <- suppressMessages(manifest_download_to_df(asset_view,
-                                                           id,
-                                                           input_token))
-      if (!is.null(manifest)) {
-        nrow(manifest)
-      } else {
-        NA
-      }
-    })
+  # get manifests for each storage project
+  dfs_skeleton_list <- lapply(seq_along(storage_project_ids), function(i) {
     
-    num_items <- purrr::flatten_int(num_items_list)
-
+    storage_project <- storage_project_names[i]
+    
+    message(glue::glue("Retrieving manifests for {storage_project}"))
+    
+    manifests <- storage_project_manifests(asset_view,
+                                           storage_project_ids[i],
+                                           input_token,
+                                           .url)
+    
+    # pull out data from list
+    # dataset metadata
+    dataset_naming_metadata <- purrr::map(manifests, 1)
+    
+    # get manifest synid to ID rows with no manifest
+    dataset_manifest_metadata <- purrr::map(manifests, 2)
+    
+    # component metadata
+    dataset_component_metadata <- purrr::map(manifests, 3)
+    
+    # pull together in a dataframe
+    data.frame(Component = rep("DataFlow", length(dataset_naming_metadata)),
+               contributor = rep(storage_project_names[i], length(dataset_naming_metadata)),
+               entity_id = purrr::map_chr(dataset_naming_metadata, 1),
+               dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
+               dataset = purrr::map_chr(dataset_component_metadata, 1),
+               manifest_synid = purrr::map_chr(dataset_manifest_metadata, 1))
+  })
+  
+  # combine list into a dataframe
+  dfs_manifest <- do.call("rbind", dfs_skeleton_list)
+  
+  # count rows in each manifest listed
+  if (calc_num_items) {
+    
+    num_items <- sapply(1:nrow(dfs_manifest), function(i) {
+      
+      contributor <- dfs_manifest[i, "contributor"]
+      entity_id <- dfs_manifest[i, "entity_id"]
+      message(glue::glue("Retrieving manifest: {contributor} {entity_id}"))
+      
+      # dataset == "" indicates that there is no manifest
+      if (dfs_manifest$dataset[i] == "" | dfs_manifest$manifest_synid[i] == "") {
+        manifest_nrow <- "Not Applicable"
+      } else {
+        # download manifest
+        manifest <- manifest_download_to_df(asset_view,
+                                            dfs_manifest[i, "entity_id"],
+                                            input_token)
+        
+        # if no manifest is downloaded, return NA
+        # otherwise count rows and return nrow
+        manifest_nrow <- ifelse(is.null(manifest), NA, nrow(manifest)) 
+      }
+      
+      return(manifest_nrow)
+    })
+    # if calc_num_itmes = false, just fill in the column with Not Applicable
   } else {
-    num_items <- rep("Not Applicable", length(dataset_ids))
+    num_items <- rep("Not Applicable", nrow(dfs_manifest))
   }
   
-  # create empty dataframe
-  colnames <- c("Component", 
-                "contributor",
-                "entity_id",
-                "dataset_name",
-                "dataset",
-                "num_items",
-                "release_scheduled",
-                "embargo",
-                "standard_compliance",
-                "data_portal",
-                "released")
+  # add to manifest
+  dfs_manifest$num_items <- num_items
   
-  df <- data.frame(matrix(nrow = length(dataset_ids), ncol = length(colnames)))
+  # add missing columns
+  # FIXME: Remove hardcoded column names
+  # This function will break if dataflow schema changes
+  # Source column names from schema?
+  dfs_manifest$release_scheduled <- rep("Not Applicable", nrow(dfs_manifest))
+  dfs_manifest$embargo <- rep("Not Applicable", nrow(dfs_manifest))
+  dfs_manifest$standard_compliance <- rep(FALSE, nrow(dfs_manifest))
+  dfs_manifest$data_portal <- rep(FALSE, nrow(dfs_manifest))
+  dfs_manifest$released <- rep(FALSE, nrow(dfs_manifest))
   
-  names(df) <- colnames 
   
-  # fill in dataframe
-  df$Component <- "DataFlow"
-  df$dataset_name <- dataset_names
-  df$dataset <- dataset
-  df$num_items <- num_items
-  df$entity_id <- dataset_ids
+  ## FIX DATA TYPE FOR NO MANIFEST
+  # FIXME: once schematic error is fixed this can be removed
+  dfs_manifest$dataset[dfs_manifest$manifest_synid == ""] <- ""
   
-  # add contributor
-  if (!is.null(contributor)) {
-    df$contributor <- rep(contributor, length(dataset_ids))
-  }
+  # update empty cells to "Not Applicable"
+  dfs_manifest[ dfs_manifest == "" ] <- "Not Applicable"
   
-  # if testing = TRUE: fill in w dummy data
-  if (testing) {
-    df$release_scheduled <- rep("Not Applicable", length(dataset_ids))
-    df$embargo <- rep("Not Applicable", length(dataset_ids))
-    df$standard_compliance <- rep(FALSE, length(dataset_ids))
-    df$data_portal <- rep(FALSE, length(dataset_ids))
-    df$released <- rep(FALSE, length(dataset_ids))
-  }
+  # remove manifest_synid column
+  dfs_manifest <- dfs_manifest[,-grep("manifest_synid", names(dfs_manifest))]
   
-  return(df)
+  return(dfs_manifest)
 }
