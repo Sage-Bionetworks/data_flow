@@ -1,7 +1,7 @@
 # This file needs to have chmod 400 permissions
 
 # oauth client id and secret required for the application.
-client_id: 'ID'
+client_id: '100303'
 client_secret: 'SECRET'
 
 # url of your deployed app
