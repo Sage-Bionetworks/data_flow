@@ -158,6 +158,7 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
       
       contributor <- dfs_manifest[i, "contributor"]
       entity_id <- dfs_manifest[i, "entityId"]
+
       message(glue::glue("Retrieving manifest: {contributor} {entity_id}"))
       
       # dataset == "" indicates that there is no manifest
