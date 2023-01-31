@@ -6,11 +6,7 @@
 #' @noRd
 #' 
 
-app_ui <- function(req) {
-  projectlive.modules::oauth_ui(req, ui_function, OAUTH_LIST)
-}
-
-ui_function <- function() {
+app_ui <- function() {
   
   tagList(
     # Leave this function for adding external resources
@@ -174,4 +170,16 @@ golem_add_external_resources <- function(){
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
   )
+}
+
+uiFunc <- function(req) {
+  if (!has_auth_code(parseQueryString(req$QUERY_STRING))) {
+    authorization_url <- httr::oauth2.0_authorize_url(api, app, scope = scope)
+    return(tags$script(HTML(sprintf(
+      "location.replace(\"%s\");",
+      authorization_url
+    ))))
+  } else {
+    app_ui()
+  }
 }
