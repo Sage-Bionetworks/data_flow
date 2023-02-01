@@ -1,5 +1,4 @@
 # SET UP OAUTH
-message("GLOBAL IS RUNNING")
 oauth_client <- yaml::yaml.load_file("oauth_config.yml")
 
 client_id <- toString(oauth_client$client_id)
@@ -59,16 +58,6 @@ api <- httr::oauth_endpoint(
 
 # The 'openid' scope is required by the protocol for retrieving user information.
 scope <- "openid view download modify"
-
-
-## WHY IS THIS IN DCA CODE
-#schematic_config <- yaml::yaml.load_file("schematic_config.yml")
-#api_uri <- paste(schematic_config$api$host, schematic_config$api$port, sep = ":")
-# api_uri <- api_uri <- ifelse(Sys.getenv("DCA_API_PORT") == "",
-#                              Sys.getenv("DCA_API_HOST"),
-#                              paste(Sys.getenv("DCA_API_HOST"), Sys.getenv("DCA_API_PORT"), sep = ":")
-# )
-
 
 ## IN DCA SCHEMATIC API BRANCH THIS IS REMOVED
 ## Set Up Virtual Environment
