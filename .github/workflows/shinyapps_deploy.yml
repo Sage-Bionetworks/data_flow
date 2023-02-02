@@ -30,7 +30,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pip python3.8-venv libcurl4-openssl-dev libpng-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libtiff-dev libxml2-dev
 
-
       - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-pandoc@v2
