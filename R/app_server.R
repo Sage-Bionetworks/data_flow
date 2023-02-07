@@ -11,14 +11,29 @@ app_server <- function( input, output, session ) {
   options(shiny.reactlog = TRUE)
   
   # AUTHENTICATION
-  access_token = projectlive.modules::get_oauth_access_token(
-    oauth_list = OAUTH_LIST, session = session
+  params <- parseQueryString(isolate(session$clientData$url_search))
+  if (!has_auth_code(params)) {
+    return()
+  }
+  
+  redirect_url <- paste0(
+    api$access, "?", "redirect_uri=", app_url, "&grant_type=",
+    "authorization_code", "&code=", params$code
   )
+
+  # get the access_token and userinfo token
+  req <- httr::POST(redirect_url, 
+                    encode = "form", 
+                    body = "", 
+                    httr::authenticate(app$key, app$secret, type = "basic"), 
+                    config = list())
+  # Stop the code if anything other than 2XX status code is returned
   
-  syn <- synapseclient$Synapse()
-  #browser()
-  syn$login(authToken = access_token)
+  httr::stop_for_status(req, task = "get an access token")
+  token_response <- httr::content(req, type = NULL)
+  access_token <- token_response$access_token
   
+  session$userData$access_token <- access_token
   # DEV STUFF ###########################################################################
 
   # read in configs
