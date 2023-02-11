@@ -157,6 +157,41 @@ get_all_manifests <- function(storage_project_list,
   return(do.call("rbind", synapse_manifests_list))
 }
 
+#' Call `manifest_download` Schematic endpoint for a given set of manifests and count the number of items in each manifest.
+#' 
+#' @param  get_all_manifests_out output from `get_all_manifests()`
+#' @param asset_view ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)
+#' @param input_token Synapse PAT
+#' @param base_url Base URL of schematic API
+#' 
+#' @export
+
+calculate_items_per_manifest <- function(get_all_manifests_out,
+                                         asset_view,
+                                         input_token,
+                                         base_url) {
+  
+  
+  sapply(1:nrow(get_all_manifests_out), function(i) {
+    
+    # dataset == "" indicates that there is no manifest
+    if (get_all_manifests_out$dataset[i] == "") {
+      manifest_nrow <- "Not Applicable"
+    } else {
+      # download manifest
+      manifest <- manifest_download_to_df(asset_view = asset_view,
+                                          dataset_id = get_all_manifests_out[i, "entityId"],
+                                          input_token = input_token,
+                                          base_url = base_url)
+      
+      # if no manifest is downloaded, return NA
+      # otherwise count rows and return nrow
+      manifest_nrow <- ifelse(is.null(manifest), "Not Applicable", nrow(manifest)) 
+    }
+    
+    return(manifest_nrow)
+  })
+}
 
 #' Generate a data flow status manifest skeleton. Fills in the component, contributor, data type, number of items, and dataset name columns.
 #' 
