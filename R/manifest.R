@@ -96,12 +96,75 @@ update_dfs_manifest <- function(dfs_manifest,
   return(dfs_manifest)
 }
 
+#' Call `storage/project/manifests` Schematic endpoint for a given list of storage projects (output from `storage/projects`) and output information as a dataframe
+#' 
+#' @param storage_project_list List output from `storage_projects` schematic endpoint
+#' @param asset_view ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)
+#' @param input_token Synapse PAT
+#' @param base_url Base URL of schematic API
+#' @param verbose T/F for console messages
+#' 
+#' @export
+
+get_all_manifests <- function(storage_project_list,
+                              asset_view,
+                              input_token,
+                              base_url = "https://schematic.dnt-dev.sagebase.org",
+                              verbose = FALSE) {
+  
+  if (verbose) {
+    message(paste0("Getting manifests for ", length(storage_project_list), " storage project(s)"))
+  }
+  
+  # get all storage projects under asset view
+  sp <- dataflow::storage_projects(asset_view = config$asset_view,
+                                   input_token = token,
+                                   base_url = config$api_base_url)
+
+  synapse_manifests_list <- lapply(1:length(storage_project_list), function(i) {
+    
+    if (verbose) {
+      storage_project <- purrr::map_chr(storage_project_list[i], 2)
+      
+      message(glue::glue("Retrieving manifests for {storage_project}"))
+    }
+    
+    sp_id <- purrr::map_chr(storage_project_list[i], 1)
+
+    manifest <- dataflow::storage_project_manifests(asset_view = asset_view,
+                                                    project_id = sp_id,
+                                                    input_token = input_token,
+                                                    base_url = base_url)
+    # pull out data from list
+    # dataset metadata
+    dataset_naming_metadata <- purrr::map(manifest, 1)
+    
+    # get manifest synid to ID rows with no manifest
+    dataset_manifest_metadata <- purrr::map(manifest, 2)
+    
+    # component metadata 
+    dataset_component_metadata <- purrr::map(manifest, 3)
+    
+    # pull together in a dataframe
+    data.frame(Component = rep("DataFlow", length(manifest)),
+               contributor = rep(purrr::map_chr(sp[i], 2), length(manifest)),
+               entityId = purrr::map_chr(dataset_naming_metadata, 1),
+               dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
+               dataset = purrr::map_chr(dataset_component_metadata, 1))
+  })
+  
+  # return dataframe
+  return(do.call("rbind", synapse_manifests_list))
+}
+
+
 #' Generate a data flow status manifest skeleton. Fills in the component, contributor, data type, number of items, and dataset name columns.
 #' 
 #' @param storage_project_list List output from `storage_projects` schematic endpoint
 #' @param asset_view ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)
-#' @param dataset_id Synapse ID of existing manifest
+#' @param input_token Synapse PAT
 #' @param calc_num_items TRUE/FALSE. Calculate the number of items in each manifest.
+#' @param base_url Base URL of schematic API
 #' 
 #' @export
 
@@ -109,47 +172,16 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
                                                  asset_view,
                                                  input_token,
                                                  calc_num_items,
-                                                 .url = "https://schematic.dnt-dev.sagebase.org/v1/storage/project/manifests") {
-  
-  # parse storage project list
-  storage_project_names <- purrr::map_chr(storage_project_list, 2)
-  storage_project_ids <- purrr::map_chr(storage_project_list, 1)
-  
+                                                 base_url = "https://schematic.dnt-dev.sagebase.org") {
+
   message(paste0("Generating data flow status manifest with ", length(storage_project_ids), " storage project(s)"))
   
   # get manifests for each storage project
-  dfs_skeleton_list <- lapply(seq_along(storage_project_ids), function(i) {
-    
-    storage_project <- storage_project_names[i]
-    
-    message(glue::glue("Retrieving manifests for {storage_project}"))
-    
-    manifests <- storage_project_manifests(asset_view,
-                                           storage_project_ids[i],
-                                           input_token,
-                                           .url)
-    
-    # pull out data from list
-    # dataset metadata
-    dataset_naming_metadata <- purrr::map(manifests, 1)
-    
-    # get manifest synid to ID rows with no manifest
-    dataset_manifest_metadata <- purrr::map(manifests, 2)
-    
-    # component metadata
-    dataset_component_metadata <- purrr::map(manifests, 3)
-    
-    # pull together in a dataframe
-    data.frame(Component = rep("DataFlow", length(dataset_naming_metadata)),
-               contributor = rep(storage_project_names[i], length(dataset_naming_metadata)),
-               entityId = purrr::map_chr(dataset_naming_metadata, 1),
-               dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
-               dataset = purrr::map_chr(dataset_component_metadata, 1),
-               manifest_synid = purrr::map_chr(dataset_manifest_metadata, 1))
-  })
-  
-  # combine list into a dataframe
-  dfs_manifest <- do.call("rbind", dfs_skeleton_list)
+  dfs_manifest <- get_all_manifests(storage_project_list = storage_project_list,
+                                    asset_view = asset_view,
+                                    input_token = input_token,
+                                    base_url = base_url,
+                                    verbose = TRUE)
   
   # count rows in each manifest listed
   if (calc_num_items) {

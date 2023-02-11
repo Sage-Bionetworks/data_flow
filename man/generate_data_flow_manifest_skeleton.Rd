@@ -9,7 +9,7 @@ generate_data_flow_manifest_skeleton(
   asset_view,
   input_token,
   calc_num_items,
-  .url = "https://schematic.dnt-dev.sagebase.org/v1/storage/project/manifests"
+  base_url = "https://schematic.dnt-dev.sagebase.org"
 )
 }
 \arguments{
@@ -17,9 +17,11 @@ generate_data_flow_manifest_skeleton(
 
 \item{asset_view}{ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)}
 
+\item{input_token}{Synapse PAT}
+
 \item{calc_num_items}{TRUE/FALSE. Calculate the number of items in each manifest.}
 
-\item{dataset_id}{Synapse ID of existing manifest}
+\item{base_url}{Base URL of schematic API}
 }
 \description{
 Generate a data flow status manifest skeleton. Fills in the component, contributor, data type, number of items, and dataset name columns.
