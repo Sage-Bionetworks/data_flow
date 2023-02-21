@@ -46,7 +46,6 @@ manifest_download_to_df <- function(asset_view,
 
 #' Call `storage/project/manifests` Schematic endpoint for a given list of storage projects (output from `storage/projects`) and output information as a dataframe
 #' 
-#' @param storage_project_list List output from `storage_projects` schematic endpoint
 #' @param asset_view ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)
 #' @param input_token Synapse PAT
 #' @param base_url Base URL of schematic API
@@ -54,14 +53,12 @@ manifest_download_to_df <- function(asset_view,
 #' 
 #' @export
 
-get_all_manifests <- function(storage_project_list,
-                              asset_view,
+get_all_manifests <- function(asset_view,
                               input_token,
                               base_url = "https://schematic.dnt-dev.sagebase.org",
                               verbose = FALSE) {
-  
   if (verbose) {
-    message(paste0("Getting manifests for ", length(storage_project_list), " storage project(s)"))
+    message(paste0("Getting storage project list for ", asset_view))
   }
   
   # get all storage projects under asset view
@@ -69,15 +66,19 @@ get_all_manifests <- function(storage_project_list,
                                    input_token = token,
                                    base_url = config$api_base_url)
   
-  synapse_manifests_list <- lapply(1:length(storage_project_list), function(i) {
+  if (verbose) {
+    message(paste0("Getting manifests for ", length(sp), " storage project(s)"))
+  }
+  
+  synapse_manifests_list <- lapply(1:length(sp), function(i) {
     
     if (verbose) {
-      storage_project <- purrr::map_chr(storage_project_list[i], 2)
+      storage_project <- purrr::map_chr(sp[i], 2)
       
       message(glue::glue("Retrieving manifests for {storage_project}"))
     }
     
-    sp_id <- purrr::map_chr(storage_project_list[i], 1)
+    sp_id <- purrr::map_chr(sp[i], 1)
     
     manifest <- dataflow::storage_project_manifests(asset_view = asset_view,
                                                     project_id = sp_id,
