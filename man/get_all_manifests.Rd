@@ -5,7 +5,6 @@
 \title{Call `storage/project/manifests` Schematic endpoint for a given list of storage projects (output from `storage/projects`) and output information as a dataframe}
 \usage{
 get_all_manifests(
-  storage_project_list,
   asset_view,
   input_token,
   base_url = "https://schematic.dnt-dev.sagebase.org",
@@ -13,8 +12,6 @@ get_all_manifests(
 )
 }
 \arguments{
-\item{storage_project_list}{List output from `storage_projects` schematic endpoint}
-
 \item{asset_view}{ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)}
 
 \item{input_token}{Synapse PAT}

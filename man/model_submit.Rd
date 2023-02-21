@@ -9,12 +9,13 @@ model_submit(
   asset_view,
   dataset_id,
   restrict_rules,
-  file_name,
+  json_str,
   input_token,
   manifest_record_type = "table",
   base_url = "https://schematic.dnt-dev.sagebase.org",
   schema_url =
-    "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/dev/inst/data_flow_component.jsonld"
+    "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/main/inst/data_flow_component.jsonld",
+  use_schema_label = TRUE
 )
 }
 \arguments{
@@ -31,8 +32,6 @@ model_submit(
 \item{base_url}{URL to schematic API endpoint}
 
 \item{schema_url}{URL to a schema jsonld}
-
-\item{csv_file}{Filepath of csv to validate}
 }
 \value{
 TRUE if successful upload or validate errors if not.
