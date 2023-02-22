@@ -62,9 +62,9 @@ get_all_manifests <- function(asset_view,
   }
   
   # get all storage projects under asset view
-  sp <- dataflow::storage_projects(asset_view = config$asset_view,
-                                   input_token = token,
-                                   base_url = config$api_base_url)
+  sp <- dataflow::storage_projects(asset_view = asset_view,
+                                   input_token = input_token,
+                                   base_url = base_url)
   
   if (verbose) {
     message(paste0("Getting manifests for ", length(sp), " storage project(s)"))
