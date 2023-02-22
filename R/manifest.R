@@ -56,7 +56,7 @@ prep_manifest_submit <- function(manifest,
 
 #' Convert a list to a dataframe
 #'
-#' @param dfs_status_manifest A data flow status manifest
+#' @param dfs_manifest A data flow status manifest
 #' @param dfs_updates Output from mod_update_data_flow_status.R
 #' @param selected_datasets_df Output from mod_dataset_selection.R
 #' 
@@ -178,4 +178,88 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
   dfs_manifest <- dfs_manifest[,-grep("manifest_synid", names(dfs_manifest))]
   
   return(dfs_manifest)
+}
+
+#' Generate a data flow status manifest skeleton. Fills in the component, contributor, data type, number of items, and dataset name columns.
+#' 
+#' @param asset_view ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)
+#' @param manifest_dataset_id Dataset ID for data flow status manifest to be updated
+#' @param input_token Synapse PAT
+#' @param base_url Base URL of schematic API (Defaults to  AWS version)
+#' 
+#' @export
+
+update_data_flow_manifest <- function(asset_view,
+                                      manifest_dataset_id,
+                                      input_token,
+                                      base_url) {
+  
+  # get current data flow manifest
+  dfs_manifest <- dataflow::manifest_download_to_df(asset_view = asset_view,
+                                                    dataset_id = manifest_dataset_id,
+                                                    base_url = base_url,
+                                                    input_token = input_token)
+  
+  # get all manifests for each storage project
+  synapse_manifests <- get_all_manifests(asset_view = asset_view,
+                                         input_token = input_token,
+                                         base_url = base_url,
+                                         verbose = FALSE)
+  
+  # compare recent pull of all manifests to data flow manifest
+  missing_datasets_idx <- !synapse_manifests$entityId %in% dfs_manifest$entityId
+  missing_datasets <- synapse_manifests[ missing_datasets_idx,]
+  
+  # if there are missing datasets calculate number of items for each dataset and add in missing information
+  if (nrow(missing_datasets) > 0) {
+    
+    num_items <- calculate_items_per_manifest(get_all_manifests_out = missing_datasets,
+                                              asset_view = asset_view,
+                                              input_token = input_token,
+                                              base_url = base_url)
+    
+    # fill dfs manifest rows for missing datasets
+    # FIXME: Remove hardcoded column names
+    # This function will break if dataflow schema changes
+    # Source column names from schema?
+    missing_datasets$release_scheduled <- rep("Not Applicable", nrow(missing_datasets))
+    missing_datasets$embargo <- rep("Not Applicable", nrow(missing_datasets))
+    missing_datasets$standard_compliance <- rep(FALSE, nrow(missing_datasets))
+    missing_datasets$data_portal <- rep(FALSE, nrow(missing_datasets))
+    missing_datasets$released <- rep(FALSE, nrow(missing_datasets))
+    missing_datasets$num_items <- num_items
+    
+    # remove uuid
+    uuid_idx <- grep("Uuid", names(dfs_manifest))
+    dfs_manifest <- dfs_manifest[,-uuid_idx]
+    
+    # tack on missing datasets to end of dfs_status_manifest
+    dfs_manifest <- rbind(dfs_manifest, missing_datasets)
+    
+    # sort dataframe so that contributor is grouped
+    dfs_manifest <- dfs_manifest %>% 
+      dplyr::group_by(contributor) %>% 
+      dplyr::arrange(contributor)
+    
+    # convert manifest to json
+    dfs_manifest_json <- jsonlite::toJSON(dfs_manifest)
+    
+    # submit to synapse
+    # data_type = NULL until LP can fix model/submit endpoint for large manifests
+    # If no datatype indicated no validation will be done
+    message("submitting manifest to Synapse")
+    
+    model_submit(data_type = NULL, 
+                 asset_view = asset_view,
+                 dataset_id = manifest_dataset_id,
+                 json_str = dfs_manifest_json,
+                 restrict_rules = TRUE,
+                 input_token = input_token,
+                 manifest_record_type = "table",
+                 base_url="https://schematic.dnt-dev.sagebase.org",
+                 schema_url="https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/main/inst/data_flow_component.jsonld",
+                 use_schema_label = TRUE)
+  } else {
+    message("no updates to manifest required at this time")
+  }
 }
