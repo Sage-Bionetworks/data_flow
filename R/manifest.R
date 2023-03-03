@@ -193,24 +193,31 @@ update_data_flow_manifest <- function(asset_view,
                                       manifest_dataset_id,
                                       input_token,
                                       base_url) {
-  
+  print(paste0("Checking asset view ", asset_view, " for updates"))
+  print(paste0("Getting data flow status manifest"))
   # get current data flow manifest
   dfs_manifest <- dataflow::manifest_download_to_df(asset_view = asset_view,
                                                     dataset_id = manifest_dataset_id,
                                                     base_url = base_url,
                                                     input_token = input_token)
+  
+  
   # get all manifests for each storage project
+  print("Getting all manifests")
   synapse_manifests <- get_all_manifests(asset_view = asset_view,
                                          input_token = input_token,
                                          base_url = base_url,
                                          verbose = FALSE)
   
+  print("Comparing data flow status manifest to current manifest list")
   # compare recent pull of all manifests to data flow manifest
   missing_datasets_idx <- !synapse_manifests$entityId %in% dfs_manifest$entityId
   missing_datasets <- synapse_manifests[ missing_datasets_idx,]
   
   # if there are missing datasets calculate number of items for each dataset and add in missing information
   if (nrow(missing_datasets) > 0) {
+    
+    print("New datasets found. Updating data flow status manifest")
     
     num_items <- calculate_items_per_manifest(get_all_manifests_out = missing_datasets,
                                               asset_view = asset_view,
@@ -259,6 +266,6 @@ update_data_flow_manifest <- function(asset_view,
                  schema_url = "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/main/inst/data_flow_component.jsonld",
                  use_schema_label = TRUE)
   } else {
-    message("no updates to manifest required at this time")
+    print("No updates to manifest required at this time")
   }
 }
