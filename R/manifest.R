@@ -199,7 +199,6 @@ update_data_flow_manifest <- function(asset_view,
                                                     dataset_id = manifest_dataset_id,
                                                     base_url = base_url,
                                                     input_token = input_token)
-  
   # get all manifests for each storage project
   synapse_manifests <- get_all_manifests(asset_view = asset_view,
                                          input_token = input_token,
@@ -256,8 +255,8 @@ update_data_flow_manifest <- function(asset_view,
                  restrict_rules = TRUE,
                  input_token = input_token,
                  manifest_record_type = "table",
-                 base_url="https://schematic.dnt-dev.sagebase.org",
-                 schema_url="https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/main/inst/data_flow_component.jsonld",
+                 base_url = base_url,
+                 schema_url = "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/main/inst/data_flow_component.jsonld",
                  use_schema_label = TRUE)
   } else {
     message("no updates to manifest required at this time")
