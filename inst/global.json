@@ -2,5 +2,5 @@
     "asset_view": "syn50896957",
     "manifest_dataset_id": "syn50900267",
     "schema_url": "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/main/inst/data_flow_component.jsonld",
-    "api_base_url": "https://schematic.dnt-dev.sagebase.org"
+    "api_base_url": "https://schematic-dev.api.sagebionetworks.org/"
   }
