@@ -18,7 +18,6 @@ Imports:
     magrittr,
     pkgload,
     processx,
-    projectlive.modules,
     reticulate,
     shiny (>= 1.7.1),
     shinydashboard,
