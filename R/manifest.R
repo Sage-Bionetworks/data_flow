@@ -180,7 +180,7 @@ generate_data_flow_manifest_skeleton <- function(storage_project_list,
   return(dfs_manifest)
 }
 
-#' Generate a data flow status manifest skeleton. Fills in the component, contributor, data type, number of items, and dataset name columns.
+#' Check synapse for updates to data flow status manifest
 #' 
 #' @param asset_view ID of view listing all project data assets. For example, for Synapse this would be the Synapse ID of the fileview listing all data assets for a given project.(i.e. master_fileview in config.yml)
 #' @param manifest_dataset_id Dataset ID for data flow status manifest to be updated
@@ -193,6 +193,7 @@ update_data_flow_manifest <- function(asset_view,
                                       manifest_dataset_id,
                                       input_token,
                                       base_url) {
+  
   print(paste0("Checking asset view ", asset_view, " for updates"))
   print(paste0("Getting data flow status manifest"))
   # get current data flow manifest
