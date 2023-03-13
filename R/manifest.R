@@ -205,10 +205,10 @@ update_data_flow_manifest <- function(asset_view,
   
   # get all manifests for each storage project
   print("Getting all manifests")
-  synapse_manifests <- get_all_manifests(asset_view = asset_view,
-                                         input_token = input_token,
-                                         base_url = base_url,
-                                         verbose = FALSE)
+  synapse_manifests <- dataflow::get_all_manifests(asset_view = asset_view,
+                                                   input_token = input_token,
+                                                   base_url = base_url,
+                                                   verbose = FALSE)
   
   print("Comparing data flow status manifest to current manifest list")
   # compare recent pull of all manifests to data flow manifest

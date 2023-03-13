@@ -94,12 +94,16 @@ get_all_manifests <- function(asset_view,
     # component metadata 
     dataset_component_metadata <- purrr::map(manifest, 3)
     
-    # pull together in a dataframe
-    data.frame(Component = rep("DataFlow", length(manifest)),
-               contributor = rep(purrr::map_chr(sp[i], 2), length(manifest)),
-               entityId = purrr::map_chr(dataset_naming_metadata, 1),
-               dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
-               dataset = purrr::map_chr(dataset_component_metadata, 1))
+    if (length(manifest) > 0) {
+      # pull together in a dataframe
+      return(data.frame(Component = rep("DataFlow", length(manifest)),
+                 contributor = rep(purrr::map_chr(sp[i], 2), length(manifest)),
+                 entityId = purrr::map_chr(dataset_naming_metadata, 1),
+                 dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
+                 dataset = purrr::map_chr(dataset_component_metadata, 1)))
+    } else {
+      return(NULL)
+    }
   })
   
   # return dataframe
