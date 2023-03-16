@@ -202,6 +202,11 @@ update_data_flow_manifest <- function(asset_view,
                                                     base_url = base_url,
                                                     input_token = input_token)
   
+  # check api call
+  if (is.null(dfs_manifest)) {
+    stop(paste0("No data flow status manifest returned for ", asset_view))
+  }
+  
   
   # get all manifests for each storage project
   print("Getting all manifests")
@@ -211,6 +216,7 @@ update_data_flow_manifest <- function(asset_view,
                                                    verbose = FALSE)
   
   print("Comparing data flow status manifest to current manifest list")
+  
   # compare recent pull of all manifests to data flow manifest
   missing_datasets_idx <- !synapse_manifests$entityId %in% dfs_manifest$entityId
   missing_datasets <- synapse_manifests[ missing_datasets_idx,]
