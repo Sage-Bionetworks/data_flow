@@ -2,14 +2,49 @@
 library(dataflow)
 
 # set variables
-# FIXME: How do I put get input_token from docker renviron
-asset_view <- "syn50896957"
-manifest_id <-"syn50900267"
 base_url <- "https://schematic-dev.api.sagebionetworks.org/"
-input_token <- Sys.getenv("SYNAPSE_PAT")
+secrets <- jsonlite::fromJSON(Sys.getenv("SCHEDULED_JOB_SECRETS"))
+input_token <- secrets$pat
 
-# run update manifest function
-update_data_flow_manifest(asset_view = asset_view,
-                          manifest_dataset_id = manifest_id,
-                          input_token = input_token,
-                          base_url = base_url) 
+# run update manifest functions
+
+# update FAIR demo
+tryCatch({
+  update_data_flow_manifest(asset_view = "syn50896957",
+                            # manifest_dataset_id = "syn50900267",
+                            manifest_dataset_id = "syn5090026$",
+                            input_token = input_token,
+                            base_url = base_url) 
+  },
+  error=function(e) {
+    message("Update to Fair Demo Data (syn50896957) failed")
+    message(e)
+  }
+)
+
+
+# update INCLUDE
+tryCatch({
+  update_data_flow_manifest(asset_view = "syn50996463",
+                            manifest_dataset_id = "syn51060574",
+                            input_token = input_token,
+                            base_url = base_url)
+  },
+  error=function(e) {
+    message("Update to INCLUDE (syn50996463) failed")
+    message(e)
+  }
+)
+
+# update HTAN
+tryCatch({
+  update_data_flow_manifest(asset_view = "syn20446927",
+                            manifest_dataset_id = "syn38212343",
+                            input_token = input_token,
+                            base_url = base_url)
+  },
+  error=function(e) {
+    message("Update to HTAN (syn20446927) failed")
+    message(e)
+  }
+)
