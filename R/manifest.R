@@ -242,10 +242,12 @@ update_data_flow_manifest <- function(asset_view,
     missing_datasets$released <- rep(FALSE, nrow(missing_datasets))
     missing_datasets$num_items <- num_items
     
-    # remove uuid
-    uuid_idx <- grep("Uuid", names(dfs_manifest))
-    dfs_manifest <- dfs_manifest[,-uuid_idx]
-    
+    # remove uuid if present
+    if (any(names(dfs_manifest)) == "Uuid") {
+      uuid_idx <- grep("Uuid", names(dfs_manifest))
+      dfs_manifest <- dfs_manifest[,-uuid_idx]
+    }
+
     # tack on missing datasets to end of dfs_status_manifest
     dfs_manifest <- rbind(dfs_manifest, missing_datasets)
     
