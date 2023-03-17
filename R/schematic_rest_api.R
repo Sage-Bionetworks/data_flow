@@ -167,8 +167,8 @@ manifest_validate <- function(data_type,
 model_submit <- function(data_type, 
                          asset_view,
                          dataset_id,
+                         file_name,
                          restrict_rules,
-                         json_str,
                          input_token,
                          manifest_record_type = "table",
                          base_url="https://schematic.dnt-dev.sagebase.org",
@@ -189,15 +189,19 @@ model_submit <- function(data_type,
     `dataset_id` = dataset_id,
     `manifest_record_type` = manifest_record_type,
     `restrict_rules` = restrict_rules,
-    `json_str` = json_str,
     `asset_view` = asset_view,
     `input_token` = input_token,
     `use_schema_label` = use_schema_label
   )
   
+  files = list(
+    `file_name` = httr::upload_file(file_name)
+  )
+  
   req <- httr::POST(url = url,
                     httr::add_headers(.headers=headers), 
-                    query = params)
+                    query = params,
+                    body = files)
   
   manifest_id <- httr::content(req)
   manifest_id
