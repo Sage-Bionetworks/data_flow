@@ -71,7 +71,7 @@ get_all_manifests <- function(asset_view,
   }
   
   synapse_manifests_list <- lapply(1:length(sp), function(i) {
-    
+    Sys.sleep(.1)
     if (verbose) {
       storage_project <- purrr::map_chr(sp[i], 2)
       
@@ -84,23 +84,27 @@ get_all_manifests <- function(asset_view,
                                                     project_id = sp_id,
                                                     input_token = input_token,
                                                     base_url = base_url)
-    # pull out data from list
-    # dataset metadata
-    dataset_naming_metadata <- purrr::map(manifest, 1)
     
-    # get manifest synid to ID rows with no manifest
-    dataset_manifest_metadata <- purrr::map(manifest, 2)
-    
-    # component metadata 
-    dataset_component_metadata <- purrr::map(manifest, 3)
-    
+
+    # if manifest has
     if (length(manifest) > 0) {
+      
+      # pull out data from list
+      # dataset metadata
+      dataset_naming_metadata <- purrr::map(manifest, 1)
+      
+      # get manifest synid to ID rows with no manifest
+      dataset_manifest_metadata <- purrr::map(manifest, 2)
+      
+      # component metadata 
+      dataset_component_metadata <- purrr::map(manifest, 3)
+      
       # pull together in a dataframe
       return(data.frame(Component = rep("DataFlow", length(manifest)),
-                 contributor = rep(purrr::map_chr(sp[i], 2), length(manifest)),
-                 entityId = purrr::map_chr(dataset_naming_metadata, 1),
-                 dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
-                 dataset = purrr::map_chr(dataset_component_metadata, 1)))
+                        contributor = rep(purrr::map_chr(sp[i], 2), length(manifest)),
+                        entityId = purrr::map_chr(dataset_naming_metadata, 1),
+                        dataset_name = purrr::map_chr(dataset_naming_metadata, 2),
+                        dataset = purrr::map_chr(dataset_component_metadata, 1)))
     } else {
       return(NULL)
     }
