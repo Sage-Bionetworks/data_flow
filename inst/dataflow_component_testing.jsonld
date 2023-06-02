@@ -2274,7 +2274,7 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "Testing String",
+            "sms:displayName": "TestingString",
             "sms:required": "sms:false",
             "sms:validationRules": []
         },
@@ -2291,7 +2291,7 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "Testing Logical",
+            "sms:displayName": "TestingLogical",
             "sms:required": "sms:false",
             "sms:validationRules": []
         },
