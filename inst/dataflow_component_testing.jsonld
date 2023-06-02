@@ -2013,16 +2013,16 @@
                     "@id": "bts:Embargo"
                 },
                 {
-                    "@id": "bts:StandardCompliance"
+                    "@id": "bts:TestingString"
                 },
                 {
-                    "@id": "bts:DataPortal"
+                    "@id": "bts:TestingLogical"
                 },
                 {
-                    "@id": "bts:Released"
+                    "@id": "bts:TestingNum"
                 },
                 {
-                    "@id": "bts:Testing"
+                    "@id": "bts:TestingDate"
                 }
             ],
             "sms:validationRules": []
@@ -2161,10 +2161,29 @@
             ]
         },
         {
-            "@id": "bts:StandardCompliance",
+            "@id": "bts:TestingStr",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Has dataset passed standard validation checks",
-            "rdfs:label": "StandardCompliance",
+            "rdfs:comment": "TEST STRING",
+            "rdfs:label": "TestingStr",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:DataProperty"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "testing_str",
+            "sms:required": "sms:true",
+            "sms:validationRules": [
+                "str"
+            ]
+        },
+        {
+            "@id": "bts:TestingLog",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TEST LOGICAL",
+            "rdfs:label": "TestingLog",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2181,17 +2200,17 @@
                     "@id": "bts:FALSE"
                 }
             ],
-            "sms:displayName": "standard_compliance",
+            "sms:displayName": "testing_log",
             "sms:required": "sms:true",
             "sms:validationRules": [
                 "str"
             ]
         },
         {
-            "@id": "bts:DataPortal",
+            "@id": "bts:TestingNum",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Has dataset been published to data portal\n",
-            "rdfs:label": "DataPortal",
+            "rdfs:comment": "TEST NUMBER",
+            "rdfs:label": "TestingNum",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2200,25 +2219,17 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "schema:rangeIncludes": [
-                {
-                    "@id": "bts:TRUE"
-                },
-                {
-                    "@id": "bts:FALSE"
-                }
-            ],
-            "sms:displayName": "data_portal",
+            "sms:displayName": "testing_num",
             "sms:required": "sms:true",
             "sms:validationRules": [
-                "str"
+                "num"
             ]
         },
         {
-            "@id": "bts:Released",
+            "@id": "bts:TestingDate",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Has this dataset been released\n",
-            "rdfs:label": "Released",
+            "rdfs:comment": "TEST DATE",
+            "rdfs:label": "TestingDate",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2227,37 +2238,10 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "schema:rangeIncludes": [
-                {
-                    "@id": "bts:TRUE"
-                },
-                {
-                    "@id": "bts:FALSE"
-                }
-            ],
-            "sms:displayName": "released",
+            "sms:displayName": "testing_date",
             "sms:required": "sms:true",
             "sms:validationRules": [
-                "str"
-            ]
-        },
-        {
-            "@id": "bts:TestingCol",
-            "@type": "rdfs:Class",
-            "rdfs:comment": "For testing purposes only",
-            "rdfs:label": "TestingCol",
-            "rdfs:subClassOf": [
-                {
-                    "@id": "bts:DataProperty"
-                }
-            ],
-            "schema:isPartOf": {
-                "@id": "http://schema.biothings.io"
-            },
-            "sms:displayName": "testing_col",
-            "sms:required": "sms:true",
-            "sms:validationRules": [
-                "str"
+                "date"
             ]
         },
         {
@@ -2278,10 +2262,10 @@
             "sms:validationRules": []
         },
         {
-            "@id": "bts:Testing",
+            "@id": "bts:TestingString",
             "@type": "rdfs:Class",
             "rdfs:comment": "TBD",
-            "rdfs:label": "Testing",
+            "rdfs:label": "TestingString",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataFlow"
@@ -2290,7 +2274,24 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "Testing",
+            "sms:displayName": "Testing String",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:TestingLogical",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "TestingLogical",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:DataFlow"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "Testing Logical",
             "sms:required": "sms:false",
             "sms:validationRules": []
         },
@@ -2301,7 +2302,7 @@
             "rdfs:label": "TRUE",
             "rdfs:subClassOf": [
                 {
-                    "@id": "bts:StandardCompliance"
+                    "@id": "bts:TestingLog"
                 }
             ],
             "schema:isPartOf": {
@@ -2318,7 +2319,7 @@
             "rdfs:label": "FALSE",
             "rdfs:subClassOf": [
                 {
-                    "@id": "bts:StandardCompliance"
+                    "@id": "bts:TestingLog"
                 }
             ],
             "schema:isPartOf": {
