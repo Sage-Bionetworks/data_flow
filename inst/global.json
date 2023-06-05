@@ -1,6 +1,6 @@
 {
     "asset_view": "syn50896957",
     "manifest_dataset_id": "syn50900267",
-    "schema_url": "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/dev-schema-changes-testing/inst/dataflow_component.jsonld",
+    "schema_url": "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/dev-schema-changes-testing/inst/dataflow_component_testing.jsonld",
     "api_base_url": "https://schematic-dev.api.sagebionetworks.org"
   }
