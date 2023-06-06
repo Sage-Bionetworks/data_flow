@@ -2007,16 +2007,10 @@
                     "@id": "bts:NumItems"
                 },
                 {
-                    "@id": "bts:ReleaseScheduled"
+                    "@id": "bts:TestingStr"
                 },
                 {
-                    "@id": "bts:Embargo"
-                },
-                {
-                    "@id": "bts:TestingString"
-                },
-                {
-                    "@id": "bts:TestingLogical"
+                    "@id": "bts:TestingLog"
                 },
                 {
                     "@id": "bts:TestingNum"
@@ -2123,44 +2117,6 @@
             ]
         },
         {
-            "@id": "bts:ReleaseScheduled",
-            "@type": "rdfs:Class",
-            "rdfs:comment": "Date that a dataset is scheduled for release",
-            "rdfs:label": "ReleaseScheduled",
-            "rdfs:subClassOf": [
-                {
-                    "@id": "bts:DataProperty"
-                }
-            ],
-            "schema:isPartOf": {
-                "@id": "http://schema.biothings.io"
-            },
-            "sms:displayName": "release_scheduled",
-            "sms:required": "sms:true",
-            "sms:validationRules": [
-                "date"
-            ]
-        },
-        {
-            "@id": "bts:Embargo",
-            "@type": "rdfs:Class",
-            "rdfs:comment": "Date that indicates when a dataset is released from embargo",
-            "rdfs:label": "Embargo",
-            "rdfs:subClassOf": [
-                {
-                    "@id": "bts:DataProperty"
-                }
-            ],
-            "schema:isPartOf": {
-                "@id": "http://schema.biothings.io"
-            },
-            "sms:displayName": "embargo",
-            "sms:required": "sms:true",
-            "sms:validationRules": [
-                "date"
-            ]
-        },
-        {
             "@id": "bts:TestingStr",
             "@type": "rdfs:Class",
             "rdfs:comment": "TEST STRING",
@@ -2258,40 +2214,6 @@
                 "@id": "http://schema.biothings.io"
             },
             "sms:displayName": "Component",
-            "sms:required": "sms:false",
-            "sms:validationRules": []
-        },
-        {
-            "@id": "bts:TestingString",
-            "@type": "rdfs:Class",
-            "rdfs:comment": "TBD",
-            "rdfs:label": "TestingString",
-            "rdfs:subClassOf": [
-                {
-                    "@id": "bts:DataFlow"
-                }
-            ],
-            "schema:isPartOf": {
-                "@id": "http://schema.biothings.io"
-            },
-            "sms:displayName": "Testing String",
-            "sms:required": "sms:false",
-            "sms:validationRules": []
-        },
-        {
-            "@id": "bts:TestingLogical",
-            "@type": "rdfs:Class",
-            "rdfs:comment": "TBD",
-            "rdfs:label": "TestingLogical",
-            "rdfs:subClassOf": [
-                {
-                    "@id": "bts:DataFlow"
-                }
-            ],
-            "schema:isPartOf": {
-                "@id": "http://schema.biothings.io"
-            },
-            "sms:displayName": "Testing Logical",
             "sms:required": "sms:false",
             "sms:validationRules": []
         },

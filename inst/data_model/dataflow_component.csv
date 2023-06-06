@@ -1,5 +1,5 @@
 Attribute,Description,Valid Values,DependsOn,Properties,Required,Parent,DependsOn Component,Source,Validation Rules
-dataFlow,Describes data flow status,,"Component, Contributor, EntityId, Dataset Name, Dataset, Num Items, Release Scheduled, Embargo, Standard Compliance, Data Portal, Released",,TRUE,DataType,,,
+dataFlow,Describes data flow status,,"Component, contributor, entityId, dataset_name, dataset, num_items, release_scheduled, embargo, standard_compliance, data_portal, released",,TRUE,DataType,,,
 contributor,Storage project that dataset is contained in,,,,TRUE,DataProperty,,,str
 entityId,Synapse unique ID,,,,TRUE,DataProperty,,,str
 dataset_name,Unique dataset name,,,,TRUE,DataProperty,,,str
