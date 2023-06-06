@@ -1,0 +1,13 @@
+Attribute,Description,Valid Values,DependsOn,Properties,Required,Parent,DependsOn Component,Source,Validation Rules
+dataFlow,Describes data flow status,,"Component, Contributor, EntityId, Dataset Name, Dataset, Num Items, Release Scheduled, Embargo, Testing String, Testing Logical, Testing Num, Testing Date",,TRUE,DataType,,,
+contributor,Storage project that dataset is contained in,,,,TRUE,DataProperty,,,str
+entityId,Synapse unique ID,,,,TRUE,DataProperty,,,str
+dataset_name,Unique dataset name,,,,TRUE,DataProperty,,,str
+dataset,Type of dataset,,,,TRUE,DataProperty,,,str
+num_items,Number of files contained in a manifest,,,,TRUE,DataProperty,,,int
+release_scheduled,Date that a dataset is scheduled for release,,,,TRUE,DataProperty,,,date
+embargo,Date that indicates when a dataset is released from embargo,,,,TRUE,DataProperty,,,date
+testing_str,TEST STRING,,,,TRUE,DataProperty,,,str
+testing_log,TEST LOGICAL,"TRUE, FALSE",,,TRUE,DataProperty,,,str
+testing_num,TEST NUMBER,,,,TRUE,DataProperty,,,num
+testing_date,TEST DATE,,,,TRUE,DataProperty,,,date
