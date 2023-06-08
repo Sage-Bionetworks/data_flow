@@ -2123,26 +2123,25 @@
             ]
         },
         {
-<<<<<<< HEAD
             "@id": "bts:Embargo",
             "@type": "rdfs:Class",
             "rdfs:comment": "Date of embargo",
             "rdfs:label": "Embargo",
             "rdfs:subClassOf": [
                 {
-                    "@id": "schema:Thing"
+                    "@id": "bts:DataProperty"
                 }
             ],
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
             "sms:displayName": "embargo",
-            "sms:required": "sms:false",
-            "sms:validationRules": []
+            "sms:required": "sms:true",
+            "sms:validationRules": [
+                "date"
+            ]
         },
         {
-=======
->>>>>>> 1101549c4e59cd723ea0327c4d1c8ab959736dc6
             "@id": "bts:ReleaseScheduled",
             "@type": "rdfs:Class",
             "rdfs:comment": "Date of scheduled release",
