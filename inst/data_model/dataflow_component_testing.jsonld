@@ -2117,6 +2117,25 @@
             ]
         },
         {
+            "@id": "bts:ReleaseScheduled",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "Date of scheduled release",
+            "rdfs:label": "ReleaseScheduled",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:DataProperty"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "release_scheduled",
+            "sms:required": "sms:true",
+            "sms:validationRules": [
+                "date"
+            ]
+        },
+        {
             "@id": "bts:TestingStr",
             "@type": "rdfs:Class",
             "rdfs:comment": "TEST STRING",
