@@ -2007,6 +2007,9 @@
                     "@id": "bts:NumItems"
                 },
                 {
+                    "@id": "bts:ReleaseScheduled"
+                },
+                {
                     "@id": "bts:TestingStr"
                 },
                 {
