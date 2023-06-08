@@ -5,7 +5,7 @@ entityId,Synapse unique ID,,,,TRUE,DataProperty,,,str
 dataset_name,Unique dataset name,,,,TRUE,DataProperty,,,str
 dataset,Type of dataset,,,,TRUE,DataProperty,,,str
 num_items,Number of files contained in a manifest,,,,TRUE,DataProperty,,,int
-embargo,Date of embargo,,,,,,,,
+embargo,Date of embargo,,,,TRUE,DataProperty,,,date
 release_scheduled,Date of scheduled release,,,,TRUE,DataProperty,,,date
 testing_str,TEST STRING,,,,TRUE,DataProperty,,,str
 testing_log,TEST LOGICAL,"TRUE, FALSE",,,TRUE,DataProperty,,,str

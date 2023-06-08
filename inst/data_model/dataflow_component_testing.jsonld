@@ -2123,6 +2123,7 @@
             ]
         },
         {
+<<<<<<< HEAD
             "@id": "bts:Embargo",
             "@type": "rdfs:Class",
             "rdfs:comment": "Date of embargo",
@@ -2140,6 +2141,8 @@
             "sms:validationRules": []
         },
         {
+=======
+>>>>>>> 1101549c4e59cd723ea0327c4d1c8ab959736dc6
             "@id": "bts:ReleaseScheduled",
             "@type": "rdfs:Class",
             "rdfs:comment": "Date of scheduled release",
