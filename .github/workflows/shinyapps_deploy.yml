@@ -9,6 +9,7 @@ on:
     branches:
       - main
       - dev*
+      - FDS* #FOR TESTING ONLY
     tags:
       - v[0-9]+.[0-9]+.[0-9]+
 
@@ -57,14 +58,14 @@ jobs:
           # otherwise to test
           if (grepl("v[0-9]+.[0-9]+.[0-9]+", refName)) {
             message("Deploying release version of app")
-            Sys.setenv(API_URL = $SCHEMATIC_URL_PROD)
+            Sys.setenv(API_URL = "$SCHEMATIC_URL_PROD")
           } else if (refName == "main") {
             appName <- paste(appName, "staging", sep = "-")
-            Sys.setenv(API_URL = $SCHEMATIC_URL_STAGING)
+            Sys.setenv(API_URL = "$SCHEMATIC_URL_STAGING")
             message("Deploying staging version of app")
           } else {
             appName <- paste(appName, "testing", sep = "-")
-            Sys.setenv(API_URL = $SCHEMATIC_URL_DEV)
+            Sys.setenv(API_URL = "$SCHEMATIC_URL_DEV")
             message("Deploying testing version of app")
           }
 
