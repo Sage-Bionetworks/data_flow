@@ -30,17 +30,15 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y pip libcurl4-openssl-dev libpng-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libtiff-dev libxml2-dev
-        # this action checks out the $GITHUB_WORKSPACE repository so that the workflow can access it
+        
+      # this action checks out the $GITHUB_WORKSPACE repository so that the workflow can access it
       - uses: actions/checkout@v3
-        # this action sets up pandoc
+        
+      # this action sets up pandoc
       - uses: r-lib/actions/setup-pandoc@v2
-        # this action activates renv
+        
+      # this action activates renv
       - uses: r-lib/actions/setup-renv@v2
-        # Write synapse config (not sure if I even need this??)
-      - name: Set Configurations
-        shell: bash
-        run: |
-          echo "${{ secrets.SCHEMATIC_SYNAPSE_CONFIG }}" > .synapseConfig
         # deploy app using rsconnect
       - name: Authorize and deploy app
         run: |
@@ -51,7 +49,9 @@ jobs:
           repo <- Sys.getenv("GITHUB_REPOSITORY")
           appName <- strsplit(repo, "/")[[1]][2]
 
-          # if tag is v*.*.*, deploy to prod, if main to staging, otherwise to test
+          # if tag is v*.*.*, deploy to prod
+          # if main to staging
+          # otherwise to test
           if (grepl("v[0-9]+.[0-9]+.[0-9]+", refName)) {
             message("Deploying release version of app")
           } else if (refName == "main") {
@@ -64,6 +64,7 @@ jobs:
 
           message(sprintf("Deploying to %s instance.", appName))
 
+          # assign secrets to variables
           rsConnectUser <-"${{ secrets.RSCONNECT_USER }}"
           rsConnectToken <- "${{ secrets.RSCONNECT_TOKEN }}"
           rsConnectSecret <- "${{ secrets.RSCONNECT_SECRET }}"
@@ -74,15 +75,17 @@ jobs:
           appUrl<- sprintf("https://%s.shinyapps.io/%s", rsConnectUser, appName)
           config <- c(config, sprintf("app_url: %s", appUrl))
          
+          # write config file
           configFileConn<-file("oauth_config.yml")
           tryCatch(
              writeLines(config, configFileConn),
              finally=close(configFileConn)
           )
-          # FIXME ADD size parameter
+
+          # set account info
           rsconnect::setAccountInfo(rsConnectUser, rsConnectToken, rsConnectSecret)
           
-          # Get app names. If app exists, configure then deploy. Otherwise
+          # get app names. If app exists, configure then deploy. Otherwise
           # deploy then configure.
           apps <- rsconnect::applications()$name
           if (appName %in% apps) {
