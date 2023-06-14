@@ -70,7 +70,7 @@ jobs:
           }
 
           message(sprintf("Deploying to %s instance.", appName))
-          message(Sys.getenv())
+          print(Sys.getenv())
 
           # assign secrets to variables
           rsConnectUser <-"${{ secrets.RSCONNECT_USER }}"
