@@ -22,6 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     container: rocker/rstudio:4.1.2
     env:
+      SCHEMATIC_URL_DEV: https://schematic-dev.api.sagebionetworks.org/v1/ui/
+      SCHEMATIC_URL_STAGING: https://schematic-staging.api.sagebionetworks.org/v1/ui/
+      SCHEMATIC_URL_PROD: https://schematic.api.sagebionetworks.org/v1/ui/
       # This should not be necessary for installing from public repo's however remotes::install_github() fails without it.
       GITHUB_PAT:  ${{ secrets.GITHUB_TOKEN }}
 
@@ -54,11 +57,14 @@ jobs:
           # otherwise to test
           if (grepl("v[0-9]+.[0-9]+.[0-9]+", refName)) {
             message("Deploying release version of app")
+            Sys.setenv(API_URL = $SCHEMATIC_URL_PROD)
           } else if (refName == "main") {
             appName <- paste(appName, "staging", sep = "-")
+            Sys.setenv(API_URL = $SCHEMATIC_URL_STAGING)
             message("Deploying staging version of app")
           } else {
             appName <- paste(appName, "testing", sep = "-")
+            Sys.setenv(API_URL = $SCHEMATIC_URL_DEV)
             message("Deploying testing version of app")
           }
 
