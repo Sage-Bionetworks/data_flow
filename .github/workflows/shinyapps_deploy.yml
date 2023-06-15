@@ -22,9 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     container: rocker/rstudio:4.1.2
     env:
-      SCHEMATIC_URL_DEV: https://schematic-dev.api.sagebionetworks.org/v1/ui/
-      SCHEMATIC_URL_STAGING: https://schematic-staging.api.sagebionetworks.org/v1/ui/
-      SCHEMATIC_URL_PROD: https://schematic.api.sagebionetworks.org/v1/ui/
+      SCHEMATIC_URL_DEV: https://schematic-dev.api.sagebionetworks.org
+      SCHEMATIC_URL_STAGING: https://schematic-staging.api.sagebionetworks.org
+      SCHEMATIC_URL_PROD: https://schematic.api.sagebionetworks.org
       # This should not be necessary for installing from public repo's however remotes::install_github() fails without it.
       GITHUB_PAT:  ${{ secrets.GITHUB_TOKEN }}
 
