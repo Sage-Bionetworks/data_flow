@@ -58,17 +58,21 @@ jobs:
           # otherwise to test
           if (grepl("v[0-9]+.[0-9]+.[0-9]+", refName)) {
             message("Deploying release version of app using schematic API production instance")
-            Sys.setenv(DFA_SCHEMATIC_API_URL = "${{ env.SCHEMATIC_URL_PROD }}")
+            renviron <- "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_PROD }}'"
           } else if (refName == "main") {
             appName <- paste(appName, "staging", sep = "-")
-            Sys.setenv(DFA_SCHEMATIC_API_URL = "${{ env.SCHEMATIC_URL_STAGING }}")
+            renviron <- "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_STAGING }}'"
             message("Deploying staging version of app using schematic API staging instance")
           } else {
             appName <- paste(appName, "testing", sep = "-")
-            Sys.setenv(DFA_SCHEMATIC_API_URL = "${{ env.SCHEMATIC_URL_DEV }}")
+            renviron <- "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_DEV }}'"
             message("Deploying testing version of app using schematic API dev instance")
           }
 
+          # write .Renviron
+          writeLines(renviron, ".Renviron") 
+
+          # deploy
           message(sprintf("Deploying to %s instance.", appName))
 
           # assign secrets to variables
