@@ -1,3 +1,5 @@
+Sys.getenv()
+
 # READ IN CONFIG
 global_config <- jsonlite::read_json("inst/global.json")
 
