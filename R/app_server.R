@@ -9,8 +9,7 @@
 app_server <- function( input, output, session ) {
   # Your application server logic
   options(shiny.reactlog = TRUE)
-  
-  
+
   # AUTHENTICATION
   params <- parseQueryString(isolate(session$clientData$url_search))
   if (!has_auth_code(params)) {
@@ -35,10 +34,6 @@ app_server <- function( input, output, session ) {
   access_token <- token_response$access_token
   
   session$userData$access_token <- access_token
-  # DEV STUFF ###########################################################################
-  
-  # read in configs
-  global_config <- jsonlite::read_json("inst/global.json")
   
   # generate dashboard configuration from dataFlow schema
   dash_config <- dfamodules::generate_dashboard_config(schema_url = global_config$schema_url,
@@ -58,13 +53,13 @@ app_server <- function( input, output, session ) {
                                                                          release_scheduled = "Not Scheduled",
                                                                          embargo = "No Embargo",
                                                                          dataset = "No Manifest"),
-                                                       base_url = global_config$api_base_url)
+                                                       base_url = schematic_api_url)
   
   # download data flow status manifest
   manifest_obj <- dfamodules::dataset_manifest_download(asset_view = global_config$asset_view,
                                                         dataset_id = global_config$manifest_dataset_id,
                                                         access_token = access_token,
-                                                        base_url = global_config$api_base_url)
+                                                        base_url = schematic_api_url)
   
   manifest_dfa <- dfamodules::prep_manifest_dfa(manifest = manifest_obj$content,
                                                 config = dash_config)
@@ -246,7 +241,7 @@ app_server <- function( input, output, session ) {
   select_storage_project_out <- dfamodules::mod_select_storage_project_server(id = "select_storage_project_1",
                                                                               asset_view = global_config$asset_view,
                                                                               access_token = access_token,
-                                                                              base_url = global_config$api_base_url)
+                                                                              base_url = schematic_api_url)
   
   # DATASET SELECTION
   
@@ -254,7 +249,7 @@ app_server <- function( input, output, session ) {
                                                                 storage_project_df = select_storage_project_out,
                                                                 asset_view = global_config$asset_view,
                                                                 access_token = access_token,
-                                                                base_url = global_config$api_base_url)
+                                                                base_url = schematic_api_url)
   
   # UPDATE DATA FLOW STATUS SELECTIONS 
   updated_data_flow_status <- dfamodules::mod_update_data_flow_status_server("update_data_flow_status_1")
@@ -320,7 +315,7 @@ app_server <- function( input, output, session ) {
                                       dataset_id = global_config$manifest_dataset_id,
                                       manifest_dir = "./manifest",
                                       access_token = access_token,
-                                      base_url = global_config$api_base_url,
+                                      base_url = schematic_api_url,
                                       schema_url = global_config$schema_url)
   
 }

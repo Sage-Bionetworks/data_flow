@@ -1,4 +1,22 @@
-library(yaml)
+# READ IN CONFIG
+global_config <- jsonlite::read_json("inst/global.json")
+
+# GET SCHEMATIC API URL
+# If there is a config file, use that
+# Else use environment variables
+if ("schematic_api_url" %in% names(global_config)) {
+  schematic_api_url <- global_config$schematic_api_url
+} else {
+  schematic_api_url <- Sys.getenv("DFA_SCHEMATIC_API_URL")
+}
+
+# check that all variables are present
+if (is.null(schematic_api_url) || nchar(schematic_api_url) == 0) stop("missing DFA_SCHEMATIC_API_URL environmental variable")
+if (is.null(global_config$asset_view) || nchar(global_config$asset_view) == 0) stop("asset_view is missing from global.json")
+if (is.null(global_config$manifest_dataset_id) || nchar(global_config$manifest_dataset_id) == 0) stop("manifest_dataset_id is missing from global.json")
+if (is.null(global_config$schema_url) || nchar(global_config$schema_url) == 0) stop("schema_url is missing from global.json")
+
+message("DFA is using ", schematic_api_url)
 
 # SET UP OAUTH
 oauth_client <- yaml::yaml.load_file("oauth_config.yml")
