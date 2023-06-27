@@ -1,5 +1,5 @@
 {
     "asset_view": "syn50896957",
-    "manifest_dataset_id": "syn50900267",
-    "schema_url": "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/main/inst/data_model/dataflow_component.jsonld"
+    "manifest_dataset_id": "syn51673148",
+    "schema_url": "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow/main/tests/testing_data/dataflow_component_testing.jsonld"
 }
