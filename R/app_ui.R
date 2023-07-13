@@ -68,8 +68,13 @@ app_ui <- function() {
           shinydashboard::tabItem(tabName = "dataset-dashboard",
                                   
                                   shiny::fluidRow(
-                                    shiny::uiOutput("filter_module")),
-                                  
+                                    shinydashboard::box(
+                                      width = NULL,
+                                      title = "Dashboard Filters",
+                                      status = "primary",
+                                      collapsible = TRUE,
+                                      dfamodules::mod_dashboard_filters_ui("dashboard_filters_1")
+                                    )),
                                   
                                   shiny::fluidRow(
                                     shinydashboard::box(

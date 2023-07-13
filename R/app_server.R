@@ -53,6 +53,7 @@ app_server <- function( input, output, session ) {
                                                                          release_scheduled = "Not Scheduled",
                                                                          embargo = "No Embargo",
                                                                          dataset = "No Manifest"),
+                                                       add_filter = c("embargo", "num_items", "data_portal"),
                                                        base_url = schematic_api_url)
   
   # download data flow status manifest
@@ -64,73 +65,12 @@ app_server <- function( input, output, session ) {
   manifest_dfa <- dfamodules::prep_manifest_dfa(manifest = manifest_obj$content,
                                                 config = dash_config)
   
-  # PREPARE MANIFEST FOR DASH ###########################################################
+  # GENERATE FILTERS / SUBSET MANIFEST  #################################################
+  # this module generates filter widgets and subsets manifest
   
-  # add status to manifest
-  manifest_w_status <- shiny::reactive({
-    
-    # add some columns to manifest to make logic easier
-    manifest <- manifest_dfa %>%
-      dplyr::mutate(scheduled = !is.na(release_scheduled),
-                    no_embargo = is.na(embargo) || embargo < Sys.Date(),
-                    past_due = !is.na(release_scheduled) && release_scheduled < Sys.Date())
-    
-    # generate status variable based on some logic that defines various data flow statuses
-    status <- sapply(1:nrow(manifest), function(i) {
-      row <- manifest[i, ]
-      
-      if (row$scheduled == FALSE) {
-        status <- "not scheduled"
-      } else if (row$no_embargo == FALSE || row$standard_compliance == FALSE) {
-        status <- "quarantine"
-      } else if (row$no_embargo == TRUE & row$standard_compliance == TRUE & row$released == FALSE) {
-        status <- "quarantine (ready for release)"
-      } else if (row$released == TRUE) {
-        status <- "released"
-      } else {
-        NA
-      }
-      
-      status
-    })
-    
-    # add status to manifest
-    manifest$data_flow_status <- status
-    
-    manifest
-  })
-  
-  # FILTER MANIFEST FOR DASH UI ###########################################################
-  
-  # prepare inputs for filter module
-  filter_inputs <- shiny::reactive({
-    
-    contributor_choices <- unique(manifest_w_status()$contributor)
-    dataset_choices <- unique(manifest_w_status()$dataset)
-    release_daterange_start <- min(manifest_w_status()$release_scheduled, na.rm = TRUE)
-    release_daterange_end <- max(manifest_w_status()$release_scheduled, na.rm = TRUE)
-    status_choices <- unique(manifest_w_status()$data_flow_status)
-    
-    list(contributor_choices, 
-         dataset_choices,
-         release_daterange_start,
-         release_daterange_end,
-         status_choices)
-  })
-  
-  output$filter_module <- shiny::renderUI({
-    filters <- filter_inputs()
-    dfamodules::mod_datatable_filters_ui("datatable_filters_1",
-                                         contributor_choices = filters[[1]],
-                                         dataset_choices = filters[[2]],
-                                         release_daterange = c(filters[[3]], filters[[4]]),
-                                         status_choices = filters[[5]])
-  })
-  
-  # FILTER MANIFEST FOR DASH SERVER  ####################################################
-  filtered_manifest <- dfamodules::mod_datatable_filters_server("datatable_filters_1",
-                                                                manifest_w_status)
-  
+  filtered_manifest <- dfamodules::mod_dashboard_filters_server("dashboard_filters_1", 
+                                                                dashboard_config = dash_config, 
+                                                                manifest = manifest_dfa)
   
   # DATASET DASH  #######################################################################
   
