@@ -27,6 +27,7 @@ jobs:
       SCHEMATIC_URL_PROD: https://schematic.api.sagebionetworks.org
       # This should not be necessary for installing from public repo's however remotes::install_github() fails without it.
       GITHUB_PAT:  ${{ secrets.GITHUB_TOKEN }}
+      
 
     steps:
       - name: Install System Dependencies
@@ -39,15 +40,28 @@ jobs:
         
       # this action sets up pandoc
       - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+          r-version: 'renv' 
+
+      # install packages
+      - name: Install rsconnect
+        run: |
+          install.packages("renv")
+          renv::upgrade(version = "0.17.3")
+          renv::install("rsconnect@0.8.29")
+        shell: Rscript {0}
         
       # this action activates renv
       - uses: r-lib/actions/setup-renv@v2
+
         # deploy app using rsconnect
       - name: Authorize and deploy app
         run: |
-          renv::restore()
-          install.packages("rsconnect")
-
+          renv::restore(packages = "renv")
+          
           refName <- Sys.getenv("GITHUB_REF_NAME")
           repo <- Sys.getenv("GITHUB_REPOSITORY")
           appName <- strsplit(repo, "/")[[1]][2]
@@ -98,6 +112,7 @@ jobs:
           # get app names. If app exists, configure then deploy. Otherwise
           # deploy then configure.
           apps <- rsconnect::applications()$name
+          
           if (appName %in% apps) {
             rsconnect::configureApp(appName = appName, size = "xxxlarge", logLevel = "verbose")
             rsconnect::deployApp(appName = appName)
