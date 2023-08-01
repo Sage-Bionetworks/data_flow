@@ -2304,7 +2304,7 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "Not Scheduled",
+            "sms:displayName": "not_scheduled",
             "sms:required": "sms:false",
             "sms:validationRules": []
         },
@@ -2321,7 +2321,7 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "Quarantine",
+            "sms:displayName": "quarantine",
             "sms:required": "sms:false",
             "sms:validationRules": []
         },

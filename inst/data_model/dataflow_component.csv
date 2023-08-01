@@ -5,7 +5,7 @@ entityId,Synapse unique ID,,,,TRUE,DataProperty,,,str
 dataset_name,Unique dataset name,,,,TRUE,DataProperty,,,str
 dataset,Type of dataset,,,,TRUE,DataProperty,,,str
 num_items,Number of files contained in a manifest,,,,TRUE,DataProperty,,,int::IsNA
-status,Data flow status,"Not Scheduled, Quarantine, Released",,,TRUE,DataProperty,,,str
+status,Data flow status,"not_scheduled, quarantine, released",,,TRUE,DataProperty,,,str
 release_scheduled,Date that a dataset is scheduled for release,,,,TRUE,DataProperty,,,date::IsNA
 embargo,Date that indicates when a dataset is released from embargo,,,,TRUE,DataProperty,,,date::IsNA
 standard_compliance,Has dataset passed standard validation checks,"TRUE, FALSE",,,TRUE,DataProperty,,,str
