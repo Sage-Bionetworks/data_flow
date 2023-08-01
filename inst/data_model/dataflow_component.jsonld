@@ -2007,6 +2007,9 @@
                     "@id": "bts:NumItems"
                 },
                 {
+                    "@id": "bts:Status"
+                },
+                {
                     "@id": "bts:ReleaseScheduled"
                 },
                 {
@@ -2116,7 +2119,38 @@
             "sms:displayName": "num_items",
             "sms:required": "sms:true",
             "sms:validationRules": [
-                "int"
+                "int",
+                "IsNA"
+            ]
+        },
+        {
+            "@id": "bts:Status",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "Data flow status",
+            "rdfs:label": "Status",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:DataProperty"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "schema:rangeIncludes": [
+                {
+                    "@id": "bts:NotScheduled"
+                },
+                {
+                    "@id": "bts:Quarantine"
+                },
+                {
+                    "@id": "bts:Released"
+                }
+            ],
+            "sms:displayName": "status",
+            "sms:required": "sms:true",
+            "sms:validationRules": [
+                "str"
             ]
         },
         {
@@ -2135,7 +2169,8 @@
             "sms:displayName": "release_scheduled",
             "sms:required": "sms:true",
             "sms:validationRules": [
-                "date"
+                "date",
+                "IsNA"
             ]
         },
         {
@@ -2154,7 +2189,8 @@
             "sms:displayName": "embargo",
             "sms:required": "sms:true",
             "sms:validationRules": [
-                "date"
+                "date",
+                "IsNA"
             ]
         },
         {
@@ -2252,6 +2288,40 @@
                 "@id": "http://schema.biothings.io"
             },
             "sms:displayName": "Component",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:NotScheduled",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "NotScheduled",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "Not Scheduled",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Quarantine",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Quarantine",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "Quarantine",
             "sms:required": "sms:false",
             "sms:validationRules": []
         },

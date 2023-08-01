@@ -1,12 +1,13 @@
 Attribute,Description,Valid Values,DependsOn,Properties,Required,Parent,DependsOn Component,Source,Validation Rules
-dataFlow,Describes data flow status,,"Component, contributor, entityId, dataset_name, dataset, num_items, release_scheduled, embargo, standard_compliance, data_portal, released",,TRUE,DataType,,,
+dataFlow,Describes data flow status,,"Component, contributor, entityId, dataset_name, dataset, num_items, status, release_scheduled, embargo, standard_compliance, data_portal, released",,TRUE,DataType,,,
 contributor,Storage project that dataset is contained in,,,,TRUE,DataProperty,,,str
 entityId,Synapse unique ID,,,,TRUE,DataProperty,,,str
 dataset_name,Unique dataset name,,,,TRUE,DataProperty,,,str
 dataset,Type of dataset,,,,TRUE,DataProperty,,,str
-num_items,Number of files contained in a manifest,,,,TRUE,DataProperty,,,int
-release_scheduled,Date that a dataset is scheduled for release,,,,TRUE,DataProperty,,,date
-embargo,Date that indicates when a dataset is released from embargo,,,,TRUE,DataProperty,,,date
+num_items,Number of files contained in a manifest,,,,TRUE,DataProperty,,,int::IsNA
+status,Data flow status,"Not Scheduled, Quarantine, Released",,,TRUE,DataProperty,,,str
+release_scheduled,Date that a dataset is scheduled for release,,,,TRUE,DataProperty,,,date::IsNA
+embargo,Date that indicates when a dataset is released from embargo,,,,TRUE,DataProperty,,,date::IsNA
 standard_compliance,Has dataset passed standard validation checks,"TRUE, FALSE",,,TRUE,DataProperty,,,str
 data_portal,"Has dataset been published to data portal
 ","TRUE, FALSE",,,TRUE,DataProperty,,,str
