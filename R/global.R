@@ -1,7 +1,9 @@
-# READ IN CONFIG
+# SET VARS #####################################################################
+
+# read in config
 global_config <- jsonlite::read_json("inst/global.json")
 
-# GET SCHEMATIC API URL
+# get schematic api url
 # If there is a config file, use that
 # Else use environment variables
 if ("schematic_api_url" %in% names(global_config)) {
@@ -10,31 +12,34 @@ if ("schematic_api_url" %in% names(global_config)) {
   schematic_api_url <- Sys.getenv("DFA_SCHEMATIC_API_URL")
 }
 
-# check that all variables are present
-if (is.null(schematic_api_url) || nchar(schematic_api_url) == 0) stop("missing DFA_SCHEMATIC_API_URL environmental variable")
-if (is.null(global_config$asset_view) || nchar(global_config$asset_view) == 0) stop("asset_view is missing from global.json")
-if (is.null(global_config$manifest_dataset_id) || nchar(global_config$manifest_dataset_id) == 0) stop("manifest_dataset_id is missing from global.json")
-if (is.null(global_config$schema_url) || nchar(global_config$schema_url) == 0) stop("schema_url is missing from global.json")
-
-message("DFA is using ", schematic_api_url)
-
-# SET UP OAUTH
+# oauth vars
 oauth_client <- yaml::yaml.load_file("oauth_config.yml")
 
 client_id <- toString(oauth_client$client_id)
 client_secret <- toString(oauth_client$client_secret)
 app_url <- toString(oauth_client$app_url)
 
-if (is.null(client_id) || nchar(client_id) == 0) stop("missing DFA_CLIENT_ID environmental variable")
-if (is.null(client_secret) || nchar(client_secret) == 0) stop("missing DFA_CLIENT_SECRET environmental variable")
-if (is.null(app_url) || nchar(app_url) == 0) stop("missing DFA_APP_URL environmental variable")
+# check that all variables are present
+if (is.null(client_id) | nchar(client_id) == 0) stop("missing DFA_CLIENT_ID environmental variable")
+if (is.null(client_secret) | nchar(client_secret) == 0) stop("missing DFA_CLIENT_SECRET environmental variable")
+if (is.null(app_url) | nchar(app_url) == 0) stop("missing DFA_APP_URL environmental variable")
+if (is.null(schematic_api_url) | nchar(schematic_api_url) == 0) stop("missing DFA_SCHEMATIC_API_URL environmental variable")
+if (is.null(global_config$asset_view) | nchar(global_config$asset_view) == 0) stop("asset_view is missing from global.json")
+if (is.null(global_config$manifest_dataset_id) | nchar(global_config$manifest_dataset_id) == 0) stop("manifest_dataset_id is missing from global.json")
+if (is.null(global_config$schema_url) | nchar(global_config$schema_url) == 0) stop("schema_url is missing from global.json")
 
-# update port if running app locally
+# set message to consol
+message("DFA is using ", schematic_api_url)
+
+# UPDATE PORT ##################################################################
+
 if (interactive()) {
   port <- httr::parse_url(app_url)$port
   if (is.null(port)) stop("running locally requires a TCP port that the application should listen on")
   options(shiny.port = as.numeric(port))
 }
+
+# OAUTH  #######################################################################
 
 has_auth_code <- function(params) {
   # params is a list object containing the parsed URL parameters. Return TRUE if
