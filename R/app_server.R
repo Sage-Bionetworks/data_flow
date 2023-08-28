@@ -37,18 +37,19 @@ app_server <- function( input, output, session ) {
   
   # generate dashboard configuration from dataFlow schema
   dash_config <- dfamodules::generate_dashboard_config(schema_url = global_config$schema_url,
-                                                       display_names = list(contributor = "Contributor",
-                                                                            entityId = "Synapse ID",
-                                                                            dataset = "Data Type",
-                                                                            dataset_name = "Dataset Folder Name",
-                                                                            num_items = "Number of Items in Manifest",
-                                                                            release_scheduled = "Release Date",
-                                                                            embargo = "Embargo",
-                                                                            standard_compliance = "QC Checks",
-                                                                            released = "Released",
-                                                                            data_portal = "Data Portal",
-                                                                            Component = NA),
-                                                       icon = TRUE,
+                                                       # display_names = list(contributor = "Contributor",
+                                                       #                      entityId = "Synapse ID",
+                                                       #                      dataset = "Data Type",
+                                                       #                      dataset_name = "Dataset Folder Name",
+                                                       #                      num_items = "Number of Items in Manifest",
+                                                       #                      status = "Status",
+                                                       #                      release_scheduled = "Release Date",
+                                                       #                      embargo = "Embargo",
+                                                       #                      standard_compliance = "QC Checks",
+                                                       #                      released = "Released",
+                                                       #                      data_portal = "Data Portal",
+                                                       #                      Component = NA),
+                                                       # icon = TRUE,
                                                        na_replace = list(num_items = "No Manifest",
                                                                          release_scheduled = "Not Scheduled",
                                                                          embargo = "No Embargo",
@@ -156,80 +157,80 @@ app_server <- function( input, output, session ) {
                                       y_lab = "Number of Datasets",
                                       fill = "#0d1c38")
   
-  # PREPARE DATA FOR STACKED BAR PLOTS ##################################################
-  # specifically stacked bar plots that show data flow status grouped by contributor
-  
-  stacked_bar_data <- shiny::reactive({
-    
-    release_status_data <- filtered_manifest() %>%
-      dplyr::group_by(contributor) %>%
-      dplyr::group_by(dataset, .add = TRUE) %>%
-      dplyr::group_by(data_flow_status, .add = TRUE) %>%
-      dplyr::tally()
-    
-    # reorder factors
-    release_status_data$data_flow_status <- factor(release_status_data$data_flow_status, 
-                                                   levels = c("released", "quarantine (ready for release)", "quarantine", "not scheduled"))
-    
-    release_status_data
-  })
-  
-  dfamodules::mod_stacked_bar_server(id = "stacked_bar_release_status",
-                                     df = stacked_bar_data,
-                                     x_var = "contributor",
-                                     y_var = "n",
-                                     fill_var = "data_flow_status",
-                                     title = NULL,
-                                     x_lab = "Contributors",
-                                     y_lab = NULL,
-                                     colors = c("#085631", "#ffa500", "#a72a1e", "#3d3d3d"),
-                                     coord_flip = TRUE)
-  
-  # drop down for runners plot
-  output$select_project_ui <- shiny::renderUI({
-    
-    contributors <- unique(filtered_manifest()$contributor)
-    
-    shiny::selectInput(inputId = "select_project_input",
-                       label = NULL,
-                       choices = contributors,
-                       selectize = FALSE)
-  })
-  
-  # wrangle data for stacked bar plot (runners)
-  
-  release_data_runners <- shiny::reactive({
-    
-    shiny::req(input$select_project_input)
-    
-    release_status_data <- filtered_manifest() %>%
-      dplyr::filter(!is.na(release_scheduled)) %>%
-      dplyr::filter(contributor == input$select_project_input) %>%
-      dplyr::group_by(contributor) %>%
-      dplyr::group_by(release_scheduled, .add = TRUE) %>%
-      dplyr::group_by(data_flow_status, .add = TRUE) %>%
-      dplyr::tally()
-    
-    release_status_data$data_flow_status <- factor(release_status_data$data_flow_status, 
-                                                   levels = c("released", "quarantine (ready for release)", "quarantine"))
-    
-    release_status_data
-  })
-  
-  
-  dfamodules::mod_stacked_bar_server(id = "stacked_runners",
-                                     df = release_data_runners,
-                                     x_var = "release_scheduled",
-                                     y_var = "n",
-                                     fill_var = "data_flow_status",
-                                     title = NULL,
-                                     x_lab = "Release Dates",
-                                     y_lab = NULL,
-                                     x_line = Sys.Date(),
-                                     colors = c("#085631", "#ffa500", "#a72a1e"),
-                                     width = 10,
-                                     date_breaks = "1 month",
-                                     coord_flip = FALSE)
+  # # PREPARE DATA FOR STACKED BAR PLOTS ##################################################
+  # # specifically stacked bar plots that show data flow status grouped by contributor
+  # 
+  # stacked_bar_data <- shiny::reactive({
+  #   
+  #   release_status_data <- filtered_manifest() %>%
+  #     dplyr::group_by(contributor) %>%
+  #     dplyr::group_by(dataset, .add = TRUE) %>%
+  #     dplyr::group_by(data_flow_status, .add = TRUE) %>%
+  #     dplyr::tally()
+  #   
+  #   # reorder factors
+  #   release_status_data$data_flow_status <- factor(release_status_data$data_flow_status, 
+  #                                                  levels = c("released", "quarantine (ready for release)", "quarantine", "not scheduled"))
+  #   
+  #   release_status_data
+  # })
+  # 
+  # dfamodules::mod_stacked_bar_server(id = "stacked_bar_release_status",
+  #                                    df = stacked_bar_data,
+  #                                    x_var = "contributor",
+  #                                    y_var = "n",
+  #                                    fill_var = "data_flow_status",
+  #                                    title = NULL,
+  #                                    x_lab = "Contributors",
+  #                                    y_lab = NULL,
+  #                                    colors = c("#085631", "#ffa500", "#a72a1e", "#3d3d3d"),
+  #                                    coord_flip = TRUE)
+  # 
+  # # drop down for runners plot
+  # output$select_project_ui <- shiny::renderUI({
+  #   
+  #   contributors <- unique(filtered_manifest()$contributor)
+  #   
+  #   shiny::selectInput(inputId = "select_project_input",
+  #                      label = NULL,
+  #                      choices = contributors,
+  #                      selectize = FALSE)
+  # })
+  # 
+  # # wrangle data for stacked bar plot (runners)
+  # 
+  # release_data_runners <- shiny::reactive({
+  #   
+  #   shiny::req(input$select_project_input)
+  #   
+  #   release_status_data <- filtered_manifest() %>%
+  #     dplyr::filter(!is.na(release_scheduled)) %>%
+  #     dplyr::filter(contributor == input$select_project_input) %>%
+  #     dplyr::group_by(contributor) %>%
+  #     dplyr::group_by(release_scheduled, .add = TRUE) %>%
+  #     dplyr::group_by(data_flow_status, .add = TRUE) %>%
+  #     dplyr::tally()
+  #   
+  #   release_status_data$data_flow_status <- factor(release_status_data$data_flow_status, 
+  #                                                  levels = c("released", "quarantine (ready for release)", "quarantine"))
+  #   
+  #   release_status_data
+  # })
+  # 
+  # 
+  # dfamodules::mod_stacked_bar_server(id = "stacked_runners",
+  #                                    df = release_data_runners,
+  #                                    x_var = "release_scheduled",
+  #                                    y_var = "n",
+  #                                    fill_var = "data_flow_status",
+  #                                    title = NULL,
+  #                                    x_lab = "Release Dates",
+  #                                    y_lab = NULL,
+  #                                    x_line = Sys.Date(),
+  #                                    colors = c("#085631", "#ffa500", "#a72a1e"),
+  #                                    width = 10,
+  #                                    date_breaks = "1 month",
+  #                                    coord_flip = FALSE)
   
   # ADMINISTRATOR  #######################################################################
   
