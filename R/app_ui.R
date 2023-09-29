@@ -12,6 +12,9 @@ app_ui <- function() {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     
+    # initialize shinyjs
+    shinyjs::useShinyjs(),
+    
     # initialize waiter + use preloader
     waiter::useWaiter(),
     waiter::waiterPreloader(
@@ -42,12 +45,15 @@ app_ui <- function() {
         
         #sidebarMenu
         shinydashboard::sidebarMenu(
+          shinydashboard::menuItem("Select a DCC", 
+                                   tabName = "select_dcc",
+                                   icon = icon("rocket")),
           shinydashboard::menuItem("Dashboard", 
                                    tabName = "dataset-dashboard",
                                    icon = icon("dashboard")),
           shinydashboard::menuItem("Administrator", 
                                    tabName = "administrator",
-                                   icon = icon("cog"))
+                                   icon = icon("pencil"))
           
         )
       ),
@@ -58,11 +64,16 @@ app_ui <- function() {
         # implement dca theme module
         dcamodules::use_dca(theme = "sage"),
         
-        # initialize shinyjs
-        shinyjs::useShinyjs(),
-        
         # dashboardTabItems
         shinydashboard::tabItems(
+          
+          shinydashboard::tabItem(
+            tabName = "select_dcc",
+            shiny::fluidRow(
+              dfamodules::mod_select_dcc_ui("select_dcc",
+                                            dcc_config)
+            )
+          ),
           
           # dataset view dashboard tab
           shinydashboard::tabItem(tabName = "dataset-dashboard",
