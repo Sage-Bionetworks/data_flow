@@ -32,10 +32,9 @@ app_ui <- function() {
 
       # dashboardSidebar
       shinydashboard::dashboardSidebar(
-        id = "tabs",
-
         # sidebarMenu
         shinydashboard::sidebarMenu(
+          id = "tabs",
           shinydashboard::menuItem("Select a DCC",
             tabName = "tab_select_dcc",
             icon = icon("rocket")
@@ -55,14 +54,14 @@ app_ui <- function() {
       shinydashboard::dashboardBody(
 
         # initialize waiter + use preloader
-        waiter::useWaiter(),
-        waiter::waiterPreloader(
-          html = shiny::tagList(
-            shiny::img(src = "www/loading.gif"),
-            shiny::h4("Retrieving Synapse information...", style = "color:white;")
-          ),
-          color = "#424874"
-        ),
+        waiter::use_waiter(),
+        # waiter::waiter_preloader(
+        #   html = shiny::tagList(
+        #     shiny::img(src = "www/loading.gif"),
+        #     shiny::h4("Retrieving Synapse information...", style = "color:white;")
+        #   ),
+        #   color = "#424874"
+        # ),
 
         # implement dca theme module
         dcamodules::use_dca(theme = "sage"),
