@@ -1,4 +1,13 @@
 # READ IN CONFIG
+dcc_config <- readr::read_csv("https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/example/dcc_config.csv",
+                              show_col_types = FALSE)
+
+# TESTING FOR ONE DCC
+# dcc_config <- readr::read_csv("https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/example/dcc_config.csv",
+#                               show_col_types = FALSE)
+
+# TESTING FOR NO DCC
+
 global_config <- jsonlite::read_json("inst/global.json")
 
 # GET SCHEMATIC API URL
@@ -78,3 +87,4 @@ api <- httr::oauth_endpoint(
 
 # The 'openid' scope is required by the protocol for retrieving user information.
 scope <- "openid view download modify"
+
