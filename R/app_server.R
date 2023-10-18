@@ -76,18 +76,14 @@ app_server <- function( input, output, session ) {
   # reactive data flow status manifest object
   df_manifest_obj_react <- reactive({
     req(mod_select_dcc_out())
-    
-    # dataset manifest download can't handle reactive values
-    .asset_view <- mod_select_dcc_out()$selected_dcc_config$synapse_asset_view
-    .dataset_id <- mod_select_dcc_out()$selected_dcc_config$manifest_dataset_id
-    
-    # download data flow manifest
-    dfamodules::dataset_manifest_download(
-      asset_view = .asset_view,
-      dataset_id = .dataset_id,
-      access_token = access_token,
-      base_url = schematic_api_url)
-  })
+
+  # download data flow manifest
+  dfamodules::dataset_manifest_download(
+    asset_view = mod_select_dcc_out()$selected_dcc_config$synapse_asset_view,
+    dataset_id = mod_select_dcc_out()$selected_dcc_config$manifest_dataset_id,
+    access_token = access_token,
+    base_url = schematic_api_url)
+})
   
   # reactive data flow manifest
   df_manifest_react <- reactive({
