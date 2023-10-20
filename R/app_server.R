@@ -35,9 +35,10 @@ app_server <- function( input, output, session ) {
   
   session$userData$access_token <- access_token
   
-  # SET UP
-  # 
-  # data_flow_manifest
+  # SET UP 
+  
+  # manifest
+  
   
   # SELECT A DCC  #############################################################
   mod_select_dcc_out <- dfamodules::mod_select_dcc_server("select_dcc",
@@ -268,89 +269,112 @@ app_server <- function( input, output, session ) {
   #                                    coord_flip = FALSE)
 
   # ADMINISTRATOR  #######################################################################
+  rv_manifest <- reactiveVal()
+  # reactive value that holds manifest_dfa
+  observe({
+    rv_manifest(df_manifest_react())
+    })
+
+  # STORAGE PROJECT SELECTION
   
-  # # reactive value that holds manifest_dfa 
-  # rv_manifest <- shiny::reactiveVal(df_manifest_react())
-  # 
-  # # STORAGE PROJECT SELECTION
-  # select_storage_project_out <- dfamodules::mod_select_storage_project_server(id = "select_storage_project_1",
-  #                                                                             asset_view = mod_select_dcc_out$selected_dcc_config$synapse_asset_view,
-  #                                                                             access_token = access_token,
-  #                                                                             base_url = schematic_api_url)
-  # 
-  # # DATASET SELECTION
-  # 
-  # dataset_selection <- dfamodules::mod_dataset_selection_server(id = "dataset_selection_1",
-  #                                                               storage_project_df = select_storage_project_out,
-  #                                                               asset_view = global_config$asset_view,
-  #                                                               access_token = access_token,
-  #                                                               base_url = schematic_api_url)
-  # 
-  # # UPDATE DATA FLOW STATUS SELECTIONS
-  # updated_data_flow_status <- dfamodules::mod_update_data_flow_status_server("update_data_flow_status_1")
-  # 
-  # 
-  # # MODIFY MANIFEST
-  # modified_manifest <- shiny::reactive({
-  #   shiny::req(updated_data_flow_status())
-  # 
-  #   dfamodules::update_dfs_manifest(dfs_manifest = rv_manifest(),
-  #                                   dfs_updates = updated_data_flow_status(),
-  #                                   selected_datasets_df = dataset_selection())
-  # })
-  # 
-  # # BUTTON CLICK UPDATE MANIFEST
-  # shiny::observeEvent(input$save_update, {
-  #   rv_manifest(modified_manifest())
-  # })
-  # 
-  # shiny::observeEvent(input$clear_update, {
-  #   rv_manifest(manifest_dfa)
-  # })
-  # 
-  # # PREP MANIFEST FOR SYNAPSE SUBMISSION
-  # 
-  # manifest_submit <- shiny::reactive({
-  #   dfamodules::prep_manifest_submit(modified_manifest(),
-  #                                    dash_config)
-  # })
-  # 
-  # # DISPLAY MANIFEST
-  # admin_display_manifest <- shiny::reactive({
-  # 
-  #   # rearrange manifest so it's more readable
-  #   manifest <- dfamodules::rearrange_dataframe(manifest_submit(),
-  #                                               names(dash_config))
-  # 
-  #   # make columns factors
-  #   factor_cols <- dfamodules::get_colname_by_type(dash_config, type = "drop_down_filter")
-  #   manifest[factor_cols] <- lapply(manifest[,factor_cols], factor)
-  # 
-  #   # return
-  #   manifest
-  # })
-  # 
-  # # get names of selected datasets
-  # selected_row_names <- shiny::reactive({
-  #   dataset_selection()$id
-  # 
-  # })
-  # 
-  # dfamodules::mod_highlight_datatable_server("highlight_datatable_1",
-  #                                            admin_display_manifest,
-  #                                            selected_row_names,
-  #                                            "entityId")
-  # 
-  # # SUBMIT MODEL TO SYNAPSE
-  # # make sure to submit using a manifest that has been run through date to string
-  # dfamodules::mod_submit_model_server(id = "submit_model_1",
-  #                                     dfs_manifest = manifest_submit,
-  #                                     data_type = NULL,
-  #                                     asset_view = global_config$asset_view,
-  #                                     dataset_id = global_config$manifest_dataset_id,
-  #                                     manifest_dir = "./manifest",
-  #                                     access_token = access_token,
-  #                                     base_url = schematic_api_url,
-  #                                     schema_url = global_config$schema_url)
+  # have to capture in a reactive or else it will not work in select storage module
+  # FIXME: Convert to reactive value?
+  reactive_asset_view <- reactive({
+    mod_select_dcc_out()$selected_dcc_config$synapse_asset_view
+  })
+  
+  reactive_manifest_id <- reactive({
+    mod_select_dcc_out()$selected_dcc_config$manifest_dataset_id
+  })
+  
+  reactive_schema_url <- reactive({
+    mod_select_dcc_out()$selected_dcc_config$schema_url
+  })
+  
+  mod_select_storage_project_out <- dfamodules::mod_select_storage_project_server(
+    id = "select_storage_project_1",
+    asset_view = reactive_asset_view,
+    access_token = access_token,
+    base_url = schematic_api_url)
+
+  # DATASET SELECTION
+  reactive_project_id <- reactive({
+    mod_select_storage_project_out()
+  })
+
+  dataset_selection <- dfamodules::mod_dataset_selection_server(
+    id = "dataset_selection_1",
+    storage_project_id = reactive_project_id,
+    asset_view = reactive_asset_view,
+    access_token = access_token,
+    base_url = schematic_api_url
+  )
+
+  # UPDATE DATA FLOW STATUS SELECTIONS
+  updated_data_flow_status <- dfamodules::mod_update_data_flow_status_server("update_data_flow_status_1")
+
+
+  # MODIFY MANIFEST
+  modified_manifest <- shiny::reactive({
+    shiny::req(updated_data_flow_status())
+
+    dfamodules::update_dfs_manifest(dfs_manifest = rv_manifest(),
+                                    dfs_updates = updated_data_flow_status(),
+                                    selected_datasets_df = dataset_selection())
+  })
+
+  # BUTTON CLICK UPDATE MANIFEST
+  shiny::observeEvent(input$save_update, {
+    rv_manifest(modified_manifest())
+  })
+
+  shiny::observeEvent(input$clear_update, {
+    rv_manifest(manifest_dfa)
+  })
+
+  # PREP MANIFEST FOR SYNAPSE SUBMISSION
+
+  manifest_submit <- shiny::reactive({
+    dfamodules::prep_manifest_submit(modified_manifest(),
+                                     dash_config_react())
+  })
+
+  # DISPLAY MANIFEST
+  admin_display_manifest <- shiny::reactive({
+
+    # rearrange manifest so it's more readable
+    manifest <- dfamodules::rearrange_dataframe(manifest_submit(),
+                                                names(dash_config_react()))
+
+    # make columns factors
+    factor_cols <- dfamodules::get_colname_by_type(dash_config_react(), type = "drop_down_filter")
+    manifest[factor_cols] <- lapply(manifest[,factor_cols], factor)
+
+    # return
+    manifest
+  })
+
+  # get names of selected datasets
+  selected_row_names <- shiny::reactive({
+    dataset_selection()$id
+
+  })
+
+  dfamodules::mod_highlight_datatable_server("highlight_datatable_1",
+                                             admin_display_manifest,
+                                             selected_row_names,
+                                             "entityId")
+
+  # SUBMIT MODEL TO SYNAPSE
+  # make sure to submit using a manifest that has been run through date to string
+  dfamodules::mod_submit_model_server(id = "submit_model_1",
+                                      dfs_manifest = manifest_submit,
+                                      data_type = NULL,
+                                      asset_view = reactive_asset_view,
+                                      dataset_id = reactive_manifest_id,
+                                      manifest_dir = "./manifest",
+                                      access_token = access_token,
+                                      base_url = schematic_api_url,
+                                      schema_url = reactive_schema_url)
 
 }
