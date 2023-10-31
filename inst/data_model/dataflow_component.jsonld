@@ -1995,31 +1995,43 @@
                     "@id": "bts:Contributor"
                 },
                 {
-                    "@id": "bts:EntityId"
+                    "@id": "bts:DatasetId"
                 },
                 {
                     "@id": "bts:DatasetName"
                 },
                 {
-                    "@id": "bts:Dataset"
+                    "@id": "bts:DatasetType"
+                },
+                {
+                    "@id": "bts:UploadDate"
                 },
                 {
                     "@id": "bts:NumItems"
                 },
                 {
-                    "@id": "bts:ReleaseScheduled"
+                    "@id": "bts:DatasetSize"
                 },
                 {
-                    "@id": "bts:Embargo"
+                    "@id": "bts:ScheduledReleaseDate"
                 },
                 {
-                    "@id": "bts:StandardCompliance"
+                    "@id": "bts:ReleaseDate"
                 },
                 {
-                    "@id": "bts:DataPortal"
+                    "@id": "bts:Status"
+                },
+                {
+                    "@id": "bts:ReleasedDestinations"
                 },
                 {
                     "@id": "bts:Released"
+                },
+                {
+                    "@id": "bts:MetadataCheck"
+                },
+                {
+                    "@id": "bts:GovernanceCompliance"
                 }
             ],
             "sms:validationRules": []
@@ -2027,7 +2039,7 @@
         {
             "@id": "bts:Contributor",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Storage project that dataset is contained in",
+            "rdfs:comment": "The team of a contributing user. The team reflects the contributing institution in standard DCC setups).  Note that for DCCs picking option 1 in the standard DCC setup, the Synapse project name also reflects the contributing institutions and can be used instead of the team name.",
             "rdfs:label": "Contributor",
             "rdfs:subClassOf": [
                 {
@@ -2044,10 +2056,10 @@
             ]
         },
         {
-            "@id": "bts:EntityId",
+            "@id": "bts:DatasetId",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Synapse unique ID",
-            "rdfs:label": "EntityId",
+            "rdfs:comment": "Synapse ID of manifest folder",
+            "rdfs:label": "DatasetId",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2056,7 +2068,7 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "entityId",
+            "sms:displayName": "dataset_id",
             "sms:required": "sms:true",
             "sms:validationRules": [
                 "str"
@@ -2065,7 +2077,7 @@
         {
             "@id": "bts:DatasetName",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Unique dataset name",
+            "rdfs:comment": "Name of dataset",
             "rdfs:label": "DatasetName",
             "rdfs:subClassOf": [
                 {
@@ -2082,10 +2094,10 @@
             ]
         },
         {
-            "@id": "bts:Dataset",
+            "@id": "bts:DatasetType",
             "@type": "rdfs:Class",
             "rdfs:comment": "Type of dataset",
-            "rdfs:label": "Dataset",
+            "rdfs:label": "DatasetType",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2094,10 +2106,29 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "dataset",
+            "sms:displayName": "dataset_type",
             "sms:required": "sms:true",
             "sms:validationRules": [
                 "str"
+            ]
+        },
+        {
+            "@id": "bts:UploadDate",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "Date when both data records and data files (if applicable) have been uploaded",
+            "rdfs:label": "UploadDate",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:DataProperty"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "upload_date",
+            "sms:required": "sms:true",
+            "sms:validationRules": [
+                "date"
             ]
         },
         {
@@ -2120,10 +2151,29 @@
             ]
         },
         {
-            "@id": "bts:ReleaseScheduled",
+            "@id": "bts:DatasetSize",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "GB of data in a dataset",
+            "rdfs:label": "DatasetSize",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:DataProperty"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "dataset_size",
+            "sms:required": "sms:true",
+            "sms:validationRules": [
+                "int"
+            ]
+        },
+        {
+            "@id": "bts:ScheduledReleaseDate",
             "@type": "rdfs:Class",
             "rdfs:comment": "Date that a dataset is scheduled for release",
-            "rdfs:label": "ReleaseScheduled",
+            "rdfs:label": "ScheduledReleaseDate",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2132,17 +2182,17 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "release_scheduled",
+            "sms:displayName": "scheduled_release_date",
             "sms:required": "sms:true",
             "sms:validationRules": [
                 "date"
             ]
         },
         {
-            "@id": "bts:Embargo",
+            "@id": "bts:ReleaseDate",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Date that indicates when a dataset is released from embargo",
-            "rdfs:label": "Embargo",
+            "rdfs:comment": "Date when a given dataset has actually been released",
+            "rdfs:label": "ReleaseDate",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2151,17 +2201,17 @@
             "schema:isPartOf": {
                 "@id": "http://schema.biothings.io"
             },
-            "sms:displayName": "embargo",
+            "sms:displayName": "release_date",
             "sms:required": "sms:true",
             "sms:validationRules": [
                 "date"
             ]
         },
         {
-            "@id": "bts:StandardCompliance",
+            "@id": "bts:Status",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Has dataset passed standard validation checks",
-            "rdfs:label": "StandardCompliance",
+            "rdfs:comment": "Data flow status of a dataset",
+            "rdfs:label": "Status",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2172,23 +2222,41 @@
             },
             "schema:rangeIncludes": [
                 {
-                    "@id": "bts:TRUE"
+                    "@id": "bts:Notuploaded"
                 },
                 {
-                    "@id": "bts:FALSE"
+                    "@id": "bts:Uploaded"
+                },
+                {
+                    "@id": "bts:Curated"
+                },
+                {
+                    "@id": "bts:Quarantine"
+                },
+                {
+                    "@id": "bts:Preprocessing"
+                },
+                {
+                    "@id": "bts:Scheduledforrelease"
+                },
+                {
+                    "@id": "bts:Readyforrelease"
+                },
+                {
+                    "@id": "bts:Released"
                 }
             ],
-            "sms:displayName": "standard_compliance",
+            "sms:displayName": "status",
             "sms:required": "sms:true",
             "sms:validationRules": [
                 "str"
             ]
         },
         {
-            "@id": "bts:DataPortal",
+            "@id": "bts:ReleasedDestinations",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Has dataset been published to data portal\n",
-            "rdfs:label": "DataPortal",
+            "rdfs:comment": "Location that a dataset has been released to",
+            "rdfs:label": "ReleasedDestinations",
             "rdfs:subClassOf": [
                 {
                     "@id": "bts:DataProperty"
@@ -2199,13 +2267,16 @@
             },
             "schema:rangeIncludes": [
                 {
-                    "@id": "bts:TRUE"
+                    "@id": "bts:Notapplicable"
                 },
                 {
-                    "@id": "bts:FALSE"
+                    "@id": "bts:Dataportal"
+                },
+                {
+                    "@id": "bts:DbGaP"
                 }
             ],
-            "sms:displayName": "data_portal",
+            "sms:displayName": "released_destinations",
             "sms:required": "sms:true",
             "sms:validationRules": [
                 "str"
@@ -2214,7 +2285,7 @@
         {
             "@id": "bts:Released",
             "@type": "rdfs:Class",
-            "rdfs:comment": "Has this dataset been released\n",
+            "rdfs:comment": "Whether or not a dataset has been released\n",
             "rdfs:label": "Released",
             "rdfs:subClassOf": [
                 {
@@ -2239,6 +2310,60 @@
             ]
         },
         {
+            "@id": "bts:MetadataCheck",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "Whether or not a dataset has passed DCA/Schematic metadata checks",
+            "rdfs:label": "MetadataCheck",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:DataProperty"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "schema:rangeIncludes": [
+                {
+                    "@id": "bts:TRUE"
+                },
+                {
+                    "@id": "bts:FALSE"
+                }
+            ],
+            "sms:displayName": "metadata_check",
+            "sms:required": "sms:true",
+            "sms:validationRules": [
+                "str"
+            ]
+        },
+        {
+            "@id": "bts:GovernanceCompliance",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "Whether or not all files in a manifest have passed governance requirements",
+            "rdfs:label": "GovernanceCompliance",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:DataProperty"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "schema:rangeIncludes": [
+                {
+                    "@id": "bts:TRUE"
+                },
+                {
+                    "@id": "bts:FALSE"
+                }
+            ],
+            "sms:displayName": "governance_compliance",
+            "sms:required": "sms:true",
+            "sms:validationRules": [
+                "str"
+            ]
+        },
+        {
             "@id": "bts:Component",
             "@type": "rdfs:Class",
             "rdfs:comment": "TBD",
@@ -2256,13 +2381,183 @@
             "sms:validationRules": []
         },
         {
+            "@id": "bts:Notuploaded",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Notuploaded",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "Not uploaded",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Uploaded",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Uploaded",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "uploaded",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Curated",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Curated",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "curated",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Quarantine",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Quarantine",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "quarantine",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Preprocessing",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Preprocessing",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "preprocessing",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Scheduledforrelease",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Scheduledforrelease",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "scheduled for release",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Readyforrelease",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Readyforrelease",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:Status"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "ready for release",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Notapplicable",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Notapplicable",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:ReleasedDestinations"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "Not applicable",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:Dataportal",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "Dataportal",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:ReleasedDestinations"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "data portal",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
+            "@id": "bts:DbGaP",
+            "@type": "rdfs:Class",
+            "rdfs:comment": "TBD",
+            "rdfs:label": "DbGaP",
+            "rdfs:subClassOf": [
+                {
+                    "@id": "bts:ReleasedDestinations"
+                }
+            ],
+            "schema:isPartOf": {
+                "@id": "http://schema.biothings.io"
+            },
+            "sms:displayName": "dbGaP",
+            "sms:required": "sms:false",
+            "sms:validationRules": []
+        },
+        {
             "@id": "bts:TRUE",
             "@type": "rdfs:Class",
             "rdfs:comment": "TBD",
             "rdfs:label": "TRUE",
             "rdfs:subClassOf": [
                 {
-                    "@id": "bts:StandardCompliance"
+                    "@id": "bts:Released"
                 }
             ],
             "schema:isPartOf": {
@@ -2279,7 +2574,7 @@
             "rdfs:label": "FALSE",
             "rdfs:subClassOf": [
                 {
-                    "@id": "bts:StandardCompliance"
+                    "@id": "bts:Released"
                 }
             ],
             "schema:isPartOf": {

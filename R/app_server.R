@@ -67,9 +67,8 @@ app_server <- function( input, output, session ) {
       #                      Component = NA),
       icon = mod_select_dcc_out()$selected_dcc_config$icon,
       na_replace = list(num_items = "No Manifest",
-                        release_scheduled = "Not Scheduled",
-                        embargo = "No Embargo",
-                        dataset = "No Manifest"),
+                        scheduled_release_date = "Not Scheduled",
+                        dataset_type = "No Manifest"),
       base_url = schematic_api_url)
   })
 
@@ -95,58 +94,16 @@ app_server <- function( input, output, session ) {
                                   config = dash_config_react())
   })
   
-
-  #   output$tstPrint <- renderPrint({
-  #     df_manifest_react()
-  # })
-  
-  # PREPARE MANIFEST FOR DASH ###########################################################
-
-  # add status to manifest
-  manifest_w_status <- shiny::reactive({
-    manifest_dfa <- df_manifest_react()
-
-    # add some columns to manifest to make logic easier
-    manifest <- manifest_dfa %>%
-      dplyr::mutate(scheduled = !is.na(release_scheduled),
-                    no_embargo = is.na(embargo) || embargo < Sys.Date(),
-                    past_due = !is.na(release_scheduled) && release_scheduled < Sys.Date())
-
-    # generate status variable based on some logic that defines various data flow statuses
-    status <- sapply(1:nrow(manifest), function(i) {
-      row <- manifest[i, ]
-
-      if (row$scheduled == FALSE) {
-        status <- "not scheduled"
-      } else if (row$no_embargo == FALSE || row$standard_compliance == FALSE) {
-        status <- "quarantine"
-      } else if (row$no_embargo == TRUE & row$standard_compliance == TRUE & row$released == FALSE) {
-        status <- "quarantine (ready for release)"
-      } else if (row$released == TRUE) {
-        status <- "released"
-      } else {
-        NA
-      }
-
-      status
-    })
-
-    # add status to manifest
-    manifest$data_flow_status <- status
-
-    manifest
-  })
-
   # FILTER MANIFEST FOR DASH UI ###########################################################
 
   # prepare inputs for filter module
   filter_inputs <- shiny::reactive({
 
-    contributor_choices <- unique(manifest_w_status()$contributor)
-    dataset_choices <- unique(manifest_w_status()$dataset)
-    release_daterange_start <- min(manifest_w_status()$release_scheduled, na.rm = TRUE)
-    release_daterange_end <- max(manifest_w_status()$release_scheduled, na.rm = TRUE)
-    status_choices <- unique(manifest_w_status()$data_flow_status)
+    contributor_choices <- unique(df_manifest_react()$contributor)
+    dataset_choices <- unique(df_manifest_react()$dataset_type)
+    release_daterange_start <- min(df_manifest_react()$scheduled_release_date, na.rm = TRUE)
+    release_daterange_end <- max(df_manifest_react()$scheduled_release_date, na.rm = TRUE)
+    status_choices <- unique(df_manifest_react()$status)
 
     list(contributor_choices,
          dataset_choices,
@@ -166,7 +123,7 @@ app_server <- function( input, output, session ) {
 
   # FILTER MANIFEST FOR DASH SERVER  ####################################################
   filtered_manifest <- dfamodules::mod_datatable_filters_server("datatable_filters_1",
-                                                                manifest_w_status)
+                                                                df_manifest_react)
 
 
   # DATASET DASH  #######################################################################
@@ -187,7 +144,7 @@ app_server <- function( input, output, session ) {
 
   dfamodules::mod_distribution_server(id = "distribution_datatype",
                                       df = filtered_manifest,
-                                      group_by_var = "dataset",
+                                      group_by_var = "dataset_type",
                                       title = NULL,
                                       x_lab = "Type of dataset",
                                       y_lab = "Number of Datasets",
@@ -276,21 +233,21 @@ app_server <- function( input, output, session ) {
     })
 
   # STORAGE PROJECT SELECTION
-  
+
   # have to capture in a reactive or else it will not work in select storage module
   # FIXME: Convert to reactive value?
   reactive_asset_view <- reactive({
     mod_select_dcc_out()$selected_dcc_config$synapse_asset_view
   })
-  
+
   reactive_manifest_id <- reactive({
     mod_select_dcc_out()$selected_dcc_config$manifest_dataset_id
   })
-  
+
   reactive_schema_url <- reactive({
     mod_select_dcc_out()$selected_dcc_config$schema_url
   })
-  
+
   mod_select_storage_project_out <- dfamodules::mod_select_storage_project_server(
     id = "select_storage_project_1",
     asset_view = reactive_asset_view,
@@ -339,21 +296,6 @@ app_server <- function( input, output, session ) {
                                      dash_config_react())
   })
 
-  # DISPLAY MANIFEST
-  admin_display_manifest <- shiny::reactive({
-
-    # rearrange manifest so it's more readable
-    manifest <- dfamodules::rearrange_dataframe(manifest_submit(),
-                                                names(dash_config_react()))
-
-    # make columns factors
-    factor_cols <- dfamodules::get_colname_by_type(dash_config_react(), type = "drop_down_filter")
-    manifest[factor_cols] <- lapply(manifest[,factor_cols], factor)
-
-    # return
-    manifest
-  })
-
   # get names of selected datasets
   selected_row_names <- shiny::reactive({
     dataset_selection()$id
@@ -361,9 +303,9 @@ app_server <- function( input, output, session ) {
   })
 
   dfamodules::mod_highlight_datatable_server("highlight_datatable_1",
-                                             admin_display_manifest,
+                                             manifest_submit,
                                              selected_row_names,
-                                             "entityId")
+                                             "dataset_id")
 
   # SUBMIT MODEL TO SYNAPSE
   # make sure to submit using a manifest that has been run through date to string

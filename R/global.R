@@ -1,6 +1,7 @@
 # READ IN CONFIG
-dcc_config <- readr::read_csv("https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/example/dcc_config.csv",
+dcc_config <- readr::read_csv("https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/example-rfc-model/dcc_config.csv",
                               show_col_types = FALSE)
+
 
 # TESTING FOR ONE DCC
 # dcc_config <- readr::read_csv("https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/example/dcc_config.csv",
