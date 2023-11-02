@@ -43,8 +43,16 @@ app_server <- function( input, output, session ) {
   # SELECT A DCC  #############################################################
   mod_select_dcc_out <- dfamodules::mod_select_dcc_server("select_dcc",
                                                           dcc_config,
-                                                          access_token,
-                                                          session)
+                                                          access_token)
+  
+  # on button click (submit in dcc selection module)
+  # update current tab to be dashboard tab
+  observeEvent(mod_select_dcc_out()$btn_click, {
+    shinydashboard::updateTabItems(session = session,
+                                   inputId = "tabs",
+                                   selected = "tab_dashboard")
+    
+  })
   
   # GENERATE DASHBOARD ON CLICK  ##############################################
   dash_config_react <- reactive({
