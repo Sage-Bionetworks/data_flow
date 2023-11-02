@@ -13,6 +13,8 @@ app_ui <- function() {
 
     # initialize shinyjs
     shinyjs::useShinyjs(),
+    # initialize waiter
+    waiter::use_waiter(),
 
     # define colors for icons in datatable
     # green check
