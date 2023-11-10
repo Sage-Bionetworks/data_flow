@@ -195,8 +195,7 @@ app_server <- function( input, output, session ) {
   # SELECT STORAGE PROJECT ###################################################
   
   selected_project_id <- reactiveVal(NULL)
-  select_project_btn <- reactiveVal(NULL)
-  
+
   observe({
   
     if (input$tabs == "tab_administrator") {
@@ -207,9 +206,7 @@ app_server <- function( input, output, session ) {
         access_token = access_token,
         base_url = schematic_api_url)
       
-      selected_project_id(mod_select_storage_project_out()$selected_project_id)
-      select_project_btn(mod_select_storage_project_out()$btn_click)
-
+      selected_project_id(mod_select_storage_project_out())
     }
   })
   
