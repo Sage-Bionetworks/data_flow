@@ -13,8 +13,6 @@ app_ui <- function() {
 
     # initialize shinyjs
     shinyjs::useShinyjs(),
-    # initialize waiter
-    waiter::use_waiter(),
 
     # define colors for icons in datatable
     # green check
@@ -57,13 +55,13 @@ app_ui <- function() {
 
         # initialize waiter + use preloader
         waiter::use_waiter(),
-        # waiter::waiter_preloader(
-        #   html = shiny::tagList(
-        #     shiny::img(src = "www/loading.gif"),
-        #     shiny::h4("Retrieving Synapse information...", style = "color:white;")
-        #   ),
-        #   color = "#424874"
-        # ),
+        waiter::waiter_preloader(
+          html = shiny::tagList(
+            shiny::img(src = "www/loading.gif"),
+            shiny::h4("Retrieving Synapse information...", style = "color:white;")
+          ),
+          color = "#424874"
+        ),
 
         # implement dca theme module
         dcamodules::use_dca(theme = "sage"),
@@ -83,6 +81,9 @@ app_ui <- function() {
           # dataset view dashboard tab
           shinydashboard::tabItem(
             tabName = "tab_dashboard",
+            shiny::fluidRow(
+              shiny::verbatimTextOutput("tst", placeholder = T)
+            ),
             shiny::fluidRow(
               shiny::uiOutput("filter_module")
             ),
@@ -129,6 +130,9 @@ app_ui <- function() {
           # Administrator tab
           shinydashboard::tabItem(
             tabName = "tab_administrator",
+            shiny::fluidRow(
+              shiny::verbatimTextOutput("tst2", placeholder = T)
+            ),
             shiny::fluidPage(
               dfamodules::mod_select_storage_project_ui("select_storage_project_1"),
               dfamodules::mod_dataset_selection_ui("dataset_selection_1"),
