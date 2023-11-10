@@ -82,9 +82,6 @@ app_ui <- function() {
           shinydashboard::tabItem(
             tabName = "tab_dashboard",
             shiny::fluidRow(
-              shiny::verbatimTextOutput("tst", placeholder = T)
-            ),
-            shiny::fluidRow(
               shiny::uiOutput("filter_module")
             ),
             shiny::fluidRow(
@@ -109,30 +106,12 @@ app_ui <- function() {
                 collapsible = TRUE,
                 dfamodules::mod_distribution_ui("distribution_datatype")
               )
-            ),
-            shiny::fluidRow(
-              shinydashboard::box(
-                title = "Release status of all datasets by contributor",
-                status = "primary",
-                collapsible = TRUE,
-                dfamodules::mod_stacked_bar_ui("stacked_bar_release_status")
-              ),
-              shinydashboard::box(
-                title = "Data flow status by release date",
-                status = "primary",
-                collapsible = TRUE,
-                shiny::uiOutput("select_project_ui"),
-                dfamodules::mod_stacked_bar_ui("stacked_runners")
-              )
             )
           ),
 
           # Administrator tab
           shinydashboard::tabItem(
             tabName = "tab_administrator",
-            shiny::fluidRow(
-              shiny::verbatimTextOutput("tst2", placeholder = T)
-            ),
             shiny::fluidPage(
               dfamodules::mod_select_storage_project_ui("select_storage_project_1"),
               dfamodules::mod_dataset_selection_ui("dataset_selection_1"),

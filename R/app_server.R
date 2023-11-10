@@ -213,17 +213,6 @@ app_server <- function( input, output, session ) {
     }
   })
   
-  # observe({
-  #   mod_dataset_selection_out <- dfamodules::mod_dataset_selection_server(
-  #     id = "dataset_selection_1",
-  #     storage_project_id = selected_project_id,
-  #     asset_view = selected_dcc_config_list$synapse_asset_view,
-  #     access_token = access_token,
-  #     base_url = schematic_api_url
-  #   )
-  #   
-  # })
-  
   mod_dataset_selection_out <- dfamodules::mod_dataset_selection_server(
     id = "dataset_selection_1",
     storage_project_id = selected_project_id,
@@ -231,86 +220,6 @@ app_server <- function( input, output, session ) {
     access_token = access_token,
     base_url = schematic_api_url
   )
-
-
-  output$tst2 <- renderPrint({
-    mod_dataset_selection_out()
-  })
-  
-  # # PREPARE DATA FOR STACKED BAR PLOTS ##################################################
-  # # specifically stacked bar plots that show data flow status grouped by contributor
-  #
-  # stacked_bar_data <- shiny::reactive({
-  #
-  #   release_status_data <- filtered_manifest() %>%
-  #     dplyr::group_by(contributor) %>%
-  #     dplyr::group_by(dataset, .add = TRUE) %>%
-  #     dplyr::group_by(data_flow_status, .add = TRUE) %>%
-  #     dplyr::tally()
-  #
-  #   # reorder factors
-  #   release_status_data$data_flow_status <- factor(release_status_data$data_flow_status,
-  #                                                  levels = c("released", "quarantine (ready for release)", "quarantine", "not scheduled"))
-  #
-  #   release_status_data
-  # })
-  #
-  # dfamodules::mod_stacked_bar_server(id = "stacked_bar_release_status",
-  #                                    df = stacked_bar_data,
-  #                                    x_var = "contributor",
-  #                                    y_var = "n",
-  #                                    fill_var = "data_flow_status",
-  #                                    title = NULL,
-  #                                    x_lab = "Contributors",
-  #                                    y_lab = NULL,
-  #                                    colors = c("#085631", "#ffa500", "#a72a1e", "#3d3d3d"),
-  #                                    coord_flip = TRUE)
-  #
-  # # drop down for runners plot
-  # output$select_project_ui <- shiny::renderUI({
-  #
-  #   contributors <- unique(filtered_manifest()$contributor)
-  #
-  #   shiny::selectInput(inputId = "select_project_input",
-  #                      label = NULL,
-  #                      choices = contributors,
-  #                      selectize = FALSE)
-  # })
-  #
-  # # wrangle data for stacked bar plot (runners)
-  #
-  # release_data_runners <- shiny::reactive({
-  #
-  #   shiny::req(input$select_project_input)
-  #
-  #   release_status_data <- filtered_manifest() %>%
-  #     dplyr::filter(!is.na(release_scheduled)) %>%
-  #     dplyr::filter(contributor == input$select_project_input) %>%
-  #     dplyr::group_by(contributor) %>%
-  #     dplyr::group_by(release_scheduled, .add = TRUE) %>%
-  #     dplyr::group_by(data_flow_status, .add = TRUE) %>%
-  #     dplyr::tally()
-  #
-  #   release_status_data$data_flow_status <- factor(release_status_data$data_flow_status,
-  #                                                  levels = c("released", "quarantine (ready for release)", "quarantine"))
-  #
-  #   release_status_data
-  # })
-  #
-  #
-  # dfamodules::mod_stacked_bar_server(id = "stacked_runners",
-  #                                    df = release_data_runners,
-  #                                    x_var = "release_scheduled",
-  #                                    y_var = "n",
-  #                                    fill_var = "data_flow_status",
-  #                                    title = NULL,
-  #                                    x_lab = "Release Dates",
-  #                                    y_lab = NULL,
-  #                                    x_line = Sys.Date(),
-  #                                    colors = c("#085631", "#ffa500", "#a72a1e"),
-  #                                    width = 10,
-  #                                    date_breaks = "1 month",
-  #                                    coord_flip = FALSE)
 
   # ADMINISTRATOR  #######################################################################
 
