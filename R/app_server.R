@@ -77,7 +77,7 @@ app_server <- function( input, output, session ) {
     waiter::waiter_show(
       html = shiny::tagList(
         shiny::img(src = "www/loading.gif"),
-        shiny::h3("Configuring", style = "color:white;")),
+        shiny::h3("Getting data. This may take a moment.", style = "color:white;")),
       color="#424874"
     )
     
