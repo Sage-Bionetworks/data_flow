@@ -55,13 +55,13 @@ app_ui <- function() {
 
         # initialize waiter + use preloader
         waiter::use_waiter(),
-        # waiter::waiter_preloader(
-        #   html = shiny::tagList(
-        #     shiny::img(src = "www/loading.gif"),
-        #     shiny::h4("Retrieving Synapse information...", style = "color:white;")
-        #   ),
-        #   color = "#424874"
-        # ),
+        waiter::waiter_preloader(
+          html = shiny::tagList(
+            shiny::img(src = "www/loading.gif"),
+            shiny::h4("Retrieving Synapse information...", style = "color:white;")
+          ),
+          color = "#424874"
+        ),
 
         # implement dca theme module
         dcamodules::use_dca(theme = "sage"),
@@ -105,21 +105,6 @@ app_ui <- function() {
                 status = "primary",
                 collapsible = TRUE,
                 dfamodules::mod_distribution_ui("distribution_datatype")
-              )
-            ),
-            shiny::fluidRow(
-              shinydashboard::box(
-                title = "Release status of all datasets by contributor",
-                status = "primary",
-                collapsible = TRUE,
-                dfamodules::mod_stacked_bar_ui("stacked_bar_release_status")
-              ),
-              shinydashboard::box(
-                title = "Data flow status by release date",
-                status = "primary",
-                collapsible = TRUE,
-                shiny::uiOutput("select_project_ui"),
-                dfamodules::mod_stacked_bar_ui("stacked_runners")
               )
             )
           ),
