@@ -82,7 +82,7 @@ app_ui <- function() {
           shinydashboard::tabItem(
             tabName = "tab_dashboard",
             shiny::fluidRow(
-              shiny::uiOutput("filter_module")
+              dfamodules::mod_datatable_filters_ui("datatable_filters_1")
             ),
             shiny::fluidRow(
               shinydashboard::box(
