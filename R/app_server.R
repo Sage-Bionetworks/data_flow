@@ -104,9 +104,9 @@ app_server <- function( input, output, session ) {
       #                      data_portal = "Data Portal",
       #                      Component = NA),
       icon = selected_dcc_config_list$icon(),
-      na_replace = list(num_items = "No Manifest",
-                        scheduled_release_date = "Not Scheduled",
-                        dataset_type = "No Manifest"),
+      # na_replace = list(num_items = "No Manifest",
+      #                   scheduled_release_date = "Not Scheduled",
+      #                   dataset_type = "No Manifest"),
       base_url = schematic_api_url)
 
     # download manifest
