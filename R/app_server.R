@@ -7,6 +7,7 @@
 #' 
 
 app_server <- function( input, output, session ) {
+  
   # Your application server logic
   options(shiny.reactlog = TRUE)
 
@@ -103,9 +104,9 @@ app_server <- function( input, output, session ) {
       #                      data_portal = "Data Portal",
       #                      Component = NA),
       icon = selected_dcc_config_list$icon(),
-      na_replace = list(num_items = "No Manifest",
-                        scheduled_release_date = "Not Scheduled",
-                        dataset_type = "No Manifest"),
+      # na_replace = list(num_items = "No Manifest",
+      #                   scheduled_release_date = "Not Scheduled",
+      #                   dataset_type = "No Manifest"),
       base_url = schematic_api_url)
 
     # download manifest
@@ -126,33 +127,7 @@ app_server <- function( input, output, session ) {
     df_manifest_react(prepped_manifest)
     dash_config_react(dash_config)
     
-    # FILTER MANIFEST FOR DASH UI #############################################
-    # prepare inputs for filter module
-    
-    contributor_choices <- unique(prepped_manifest$contributor)
-    dataset_choices <- unique(prepped_manifest$dataset_type)
-    release_daterange_start <- min(prepped_manifest$scheduled_release_date, na.rm = TRUE)
-    release_daterange_end <- max(prepped_manifest$scheduled_release_date, na.rm = TRUE)
-    status_choices <- unique(prepped_manifest$status)
-      
-    filter_inputs <- list(
-      contributor_choices,
-      dataset_choices,
-      release_daterange_start,
-      release_daterange_end,
-      status_choices)
-    
-    # FILTER MANIFEST FOR DASH SERVER  ########################################
-    
-    output$filter_module <- shiny::renderUI({
-      filters <- filter_inputs
-      dfamodules::mod_datatable_filters_ui(
-        "datatable_filters_1",
-        contributor_choices = filters[[1]],
-        dataset_choices = filters[[2]],
-        release_daterange = c(filters[[3]], filters[[4]]),
-        status_choices = filters[[5]])
-    })
+    # FILTER MANIFEST FOR DASH  ########################################
 
     filtered_manifest <- dfamodules::mod_datatable_filters_server("datatable_filters_1",
                                                                   df_manifest_react)
