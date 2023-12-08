@@ -10,7 +10,7 @@ app_server <- function( input, output, session ) {
   
   # Your application server logic
   options(shiny.reactlog = TRUE)
-
+  
   # AUTHENTICATION
   params <- parseQueryString(isolate(session$clientData$url_search))
   if (!has_auth_code(params)) {
@@ -42,7 +42,9 @@ app_server <- function( input, output, session ) {
   dash_config_react <- reactiveVal(NULL)
   
   # reactive data flow manifest
-  df_manifest_react <- reactiveVal(NULL)
+  original_manifest <- reactiveVal(NULL)
+  admin_manifest <- reactiveVal(NULL)
+
   # reactive filtered manifest
   filtered_manifest_react <- reactiveVal(NULL)
   
@@ -124,13 +126,15 @@ app_server <- function( input, output, session ) {
     )
     
     # update reactiveVals
-    df_manifest_react(prepped_manifest)
+    original_manifest(prepped_manifest)
+    admin_manifest(prepped_manifest)
+    
     dash_config_react(dash_config)
     
     # FILTER MANIFEST FOR DASH  ########################################
 
     filtered_manifest <- dfamodules::mod_datatable_filters_server("datatable_filters_1",
-                                                                  df_manifest_react)
+                                                                  original_manifest)
 
     
     # DATASET DASH  ###########################################################
@@ -162,12 +166,8 @@ app_server <- function( input, output, session ) {
 
   })
   
-
-
-  
-
-
-  # SELECT STORAGE PROJECT ###################################################
+  # ADMINISTRATOR  #############################################################
+  # SELECT STORAGE PROJECT #####################################################
   
   selected_project_id <- reactiveVal(NULL)
 
@@ -185,6 +185,8 @@ app_server <- function( input, output, session ) {
     }
   })
   
+  # SELECT DATASETS  ##########################################################
+  
   mod_dataset_selection_out <- dfamodules::mod_dataset_selection_server(
     id = "dataset_selection_1",
     storage_project_id = selected_project_id,
@@ -193,58 +195,74 @@ app_server <- function( input, output, session ) {
     base_url = schematic_api_url
   )
 
-  # ADMINISTRATOR  #######################################################################
-
-
-  # # UPDATE DATA FLOW STATUS SELECTIONS
-  # updated_data_flow_status <- dfamodules::mod_update_data_flow_status_server("update_data_flow_status_1")
-  # 
-  # 
-  # # MODIFY MANIFEST
-  # modified_manifest <- shiny::reactive({
-  #   shiny::req(updated_data_flow_status())
-  # 
-  #   dfamodules::update_dfs_manifest(
-  #     dfs_manifest = df_manifest_react(),
-  #     dfs_updates = updated_data_flow_status(),
-  #     selected_datasets_df = mod_dataset_selection_out()$selected_datasets)
+  # COLLECT WIDGET SELECTIONS  ################################################
+  mod_administrator_widgets_out <- dfamodules::mod_administrator_widgets_server("update_data_flow_status_1")
+  
+  # output$tst <- renderPrint({
+  #   admin_manifest()
   # })
   # 
-  # # BUTTON CLICK UPDATE MANIFEST
-  # # shiny::observeEvent(input$save_update, {
-  # #   rv_manifest(modified_manifest())
-  # # })
-  # # 
-  # # shiny::observeEvent(input$clear_update, {
-  # #   rv_manifest(manifest_dfa)
-  # # })
+  # MAKE UPDATES TO MANIFEST  #################################################
+  
+  updated_manifest <- reactive({
+    dfamodules::apply_administrator_selections(
+      dataflow_manifest = admin_manifest(),
+      administrator_widget_output = mod_administrator_widgets_out(),
+      dataset_selection_module_output = mod_dataset_selection_out()
+    )
+  })
+  
+  # output$tst <- renderPrint({
+  #   admin_display_manifest()
+  # })
+  
+  # SHOW MANIFEST PREVIEW  ####################################################
+  # # get names of selected datasets
+  
+  selected_rows <- shiny::reactive({
+    mod_dataset_selection_out()$id
+  })
+  
+
+  dfamodules::mod_highlight_datatable_server("highlight_datatable_1",
+                                             updated_manifest,
+                                             selected_rows,
+                                             "dataset_id")
+  
+  # # BUTTON CLICK ACTIONS  #####################################################
   # 
-  # 
-  # # 
-  # # # PREP MANIFEST FOR SYNAPSE SUBMISSION
-  # # 
+  # # save updates for submission to a submission manifest reactiveVal
+  # # prevents user from having to fully submit a manifest to make new selections
+  shiny::observeEvent(input$save_update, {
+    admin_manifest(updated_manifest())
+  })
+  
+  # clear updates
+  # also clears the submission manifest of any cached updates
+  shiny::observeEvent(input$clear_update, {
+    admin_manifest(original_manifest())
+  })
+  
+
+  # PREP MANIFEST FOR SYNAPSE SUBMISSION
+
   # manifest_submit <- shiny::reactive({
-  #   dfamodules::prep_manifest_submit(modified_manifest(),
+  #   dfamodules::prep_manifest_submit(admin_manifest(),
   #                                    dash_config_react())
   # })
   # 
-  # # get names of selected datasets
-  # selected_row_names <- shiny::reactive({
-  #   mod_dataset_selection_out()$selected_datasets()$id
-  # 
+  # output$tst <- renderPrint({
+  #   manifest_submit()
   # })
-  # 
-  # dfamodules::mod_highlight_datatable_server("highlight_datatable_1",
-  #                                            manifest_submit,
-  #                                            selected_row_names,
-  #                                            "dataset_id")
+  
+
   # # 
   # # SUBMIT MODEL TO SYNAPSE
   # # make sure to submit using a manifest that has been run through date to string
   # dfamodules::mod_submit_model_server(id = "submit_model_1",
   #                                     dfs_manifest = manifest_submit,
   #                                     data_type = NULL,
-  #                                     asset_view = reactive_asset_view,
+  #                                      asset_view = reactive_asset_view,
   #                                     dataset_id = reactive_manifest_id,
   #                                     manifest_dir = "./manifest",
   #                                     access_token = access_token,
