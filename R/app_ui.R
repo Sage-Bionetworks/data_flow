@@ -27,7 +27,7 @@ app_ui <- function() {
 
       # dashboardHeader
       shinydashboard::dashboardHeader(
-        title = "Data Flow"
+        title = "Data Flow" 
       ),
 
       # dashboardSidebar
@@ -116,10 +116,10 @@ app_ui <- function() {
               dfamodules::mod_select_storage_project_ui("select_storage_project_1"),
               dfamodules::mod_dataset_selection_ui("dataset_selection_1"),
               br(),
-              dfamodules::mod_update_data_flow_status_ui("update_data_flow_status_1"),
+              dfamodules::mod_administrator_widgets_ui("update_data_flow_status_1"),
               shinydashboard::box(
                 width = NULL,
-                dfamodules::mod_highlight_datatable_ui("highlight_datatable_1"),
+                dfamodules::mod_manifest_preview_ui("highlight_datatable_1"),
                 br(),
                 shiny::actionButton("save_update", "Save Updates"),
                 shiny::actionButton("clear_update", "Clear Updates")

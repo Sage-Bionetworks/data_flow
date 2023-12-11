@@ -224,7 +224,7 @@ app_server <- function( input, output, session ) {
   })
   
 
-  dfamodules::mod_highlight_datatable_server("highlight_datatable_1",
+  dfamodules::mod_manifest_preview_server("highlight_datatable_1",
                                              updated_manifest,
                                              selected_rows,
                                              "dataset_id")
@@ -244,29 +244,28 @@ app_server <- function( input, output, session ) {
   })
   
 
-  # PREP MANIFEST FOR SYNAPSE SUBMISSION
+  # PREP MANIFEST FOR SYNAPSE SUBMISSION 
 
-  # manifest_submit <- shiny::reactive({
-  #   dfamodules::prep_manifest_submit(admin_manifest(),
-  #                                    dash_config_react())
-  # })
-  # 
-  # output$tst <- renderPrint({
-  #   manifest_submit()
-  # })
-  
+  manifest_submit <- shiny::reactive({
+    req(dash_config_react())
+    req(updated_manifest())
+    
+    dfamodules::prep_manifest_submit(
+      updated_manifest(),
+      dash_config_react()
+      )
+  })
 
-  # # 
-  # # SUBMIT MODEL TO SYNAPSE
-  # # make sure to submit using a manifest that has been run through date to string
-  # dfamodules::mod_submit_model_server(id = "submit_model_1",
-  #                                     dfs_manifest = manifest_submit,
-  #                                     data_type = NULL,
-  #                                      asset_view = reactive_asset_view,
-  #                                     dataset_id = reactive_manifest_id,
-  #                                     manifest_dir = "./manifest",
-  #                                     access_token = access_token,
-  #                                     base_url = schematic_api_url,
-  #                                     schema_url = reactive_schema_url)
-
+  # SUBMIT MODEL TO SYNAPSE
+  dfamodules::mod_submit_model_server(
+    id = "submit_model_1",
+    dfs_manifest = manifest_submit,
+    data_type = NULL,
+    asset_view = selected_dcc_config_list$synapse_asset_view,
+    dataset_id = selected_dcc_config_list$manifest_dataset_id,
+    manifest_dir = "./manifest",
+    access_token = access_token,
+    base_url = schematic_api_url,
+    schema_url = selected_dcc_config_list$schema_url
+    )
 }
