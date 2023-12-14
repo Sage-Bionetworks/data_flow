@@ -2,11 +2,6 @@
 dcc_config <- readr::read_csv("https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/main/dcc_config.csv",
                               show_col_types = FALSE)
 
-
-# TESTING FOR ONE DCC
-# dcc_config <- readr::read_csv("https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/example/dcc_config.csv",
-#                               show_col_types = FALSE)
-
 # GET SCHEMATIC API URL
 schematic_api_url <- Sys.getenv("DFA_SCHEMATIC_API_URL")
 message("DFA is using ", schematic_api_url)
