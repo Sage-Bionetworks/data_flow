@@ -416,14 +416,14 @@
     },
     "dfamodules": {
       "Package": "dfamodules",
-      "Version": "23.10.1",
+      "Version": "23.12.1",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "Sage-Bionetworks",
       "RemoteRepo": "dfamodules",
-      "RemoteRef": "dev-mt",
-      "RemoteSha": "0a33fba3f6a72baa8d5e74d0efe7d697f9e65565",
+      "RemoteRef": "dev",
+      "RemoteSha": "27d10973ec17725b3e2b8299af1246dee29ff6ad",
       "Requirements": [
         "DT",
         "dplyr",
@@ -435,13 +435,14 @@
         "lubridate",
         "magrittr",
         "purrr",
+        "readr",
         "rlang",
         "shiny",
         "shinydashboard",
         "shinyjs",
         "waiter"
       ],
-      "Hash": "51b7a95ae5c490fdbdad64effdc7737b"
+      "Hash": "a9eb38e9a5622972284a390e1272a59a"
     },
     "diffobj": {
       "Package": "diffobj",
