@@ -91,6 +91,28 @@ app_server <- function( input, output, session ) {
     selected_dcc_config_list$schema_url(mod_select_dcc_out()$selected_dcc_config$schema_url)
     selected_dcc_config_list$icon(mod_select_dcc_out()$selected_dcc_config$icon)
     
+    # User must have DOWNLOAD access to the DFA manifest.
+    manifest_perm <- dfamodules::synapse_access(
+      id = selected_dcc_config_list$manifest_dataset_id(),
+      access = "UPDATE",
+      auth = access_token
+    )
+    if (!isTRUE(manifest_perm)) {
+      shinypop::nx_report_error(
+        title = "Permission error",
+        message = tagList(
+          shiny::span("You don't have download permission to the DFA manifest",
+            shiny::a(href = paste0("https://www.synapse.org/#!Synapse:",
+              selected_dcc_config_list$manifest_dataset_id()),
+              selected_dcc_config_list$manifest_dataset_id(), taget = "_blank"
+            )
+          )
+        )
+      )
+      shinyjs::hide(selector = "#NXReportButton")
+      waiter::waiter_hide()
+    }
+
     dash_config <- dfamodules::generate_dashboard_config(
       schema_url = selected_dcc_config_list$schema_url(),
       # display_names = list(contributor = "Contributor",
