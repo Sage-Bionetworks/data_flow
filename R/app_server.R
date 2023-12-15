@@ -64,11 +64,6 @@ app_server <- function( input, output, session ) {
                                                           access_token)
   
   # CONFIGURE APP ############################################################
-  # select a dcc
-  # show waiter
-  # generate config
-  # get manifest
-  # update reactive values
   observeEvent(mod_select_dcc_out()$btn_click, {
     
     # move to dashboard page
@@ -93,22 +88,7 @@ app_server <- function( input, output, session ) {
     
     dash_config <- dfamodules::generate_dashboard_config(
       schema_url = selected_dcc_config_list$schema_url(),
-      # display_names = list(contributor = "Contributor",
-      #                      entityId = "Synapse ID",
-      #                      dataset = "Data Type",
-      #                      dataset_name = "Dataset Folder Name",
-      #                      num_items = "Number of Items in Manifest",
-      #                      status = "Status",
-      #                      release_scheduled = "Release Date",
-      #                      embargo = "Embargo",
-      #                      standard_compliance = "QC Checks",
-      #                      released = "Released",
-      #                      data_portal = "Data Portal",
-      #                      Component = NA),
       icon = selected_dcc_config_list$icon(),
-      # na_replace = list(num_items = "No Manifest",
-      #                   scheduled_release_date = "Not Scheduled",
-      #                   dataset_type = "No Manifest"),
       base_url = schematic_api_url)
 
     # download manifest
@@ -131,35 +111,42 @@ app_server <- function( input, output, session ) {
     
     dash_config_react(dash_config)
     
-    # FILTER MANIFEST FOR DASH  ########################################
+    # FILTER MANIFEST FOR DASH  ###############################################
 
-    filtered_manifest <- dfamodules::mod_datatable_filters_server("datatable_filters_1",
-                                                                  original_manifest)
-
+    filtered_manifest <- dfamodules::mod_datatable_filters_server(
+      "datatable_filters_1",
+      original_manifest
+      )
     
     # DATASET DASH  ###########################################################
 
-    dfamodules::mod_datatable_dashboard_server("dashboard_1",
-                                               filtered_manifest,
-                                               dash_config_react)
+    dfamodules::mod_datatable_dashboard_server(
+      "dashboard_1",
+      filtered_manifest,
+      dash_config_react
+      )
     
     # DATASET DASH VIZ : DISTRIBUTIONS ########################################
     
-    dfamodules::mod_distribution_server(id = "distribution_contributor",
-                                        df = filtered_manifest,
-                                        group_by_var = "contributor",
-                                        title = NULL,
-                                        x_lab = "Contributor",
-                                        y_lab = "Number of Datasets",
-                                        fill = "#0d1c38")
+    dfamodules::mod_distribution_server(
+      id = "distribution_contributor",
+      df = filtered_manifest,
+      group_by_var = "contributor",
+      title = NULL,
+      x_lab = "Contributor",
+      y_lab = "Number of Datasets",
+      fill = "#0d1c38"
+    )
     
-    dfamodules::mod_distribution_server(id = "distribution_datatype",
-                                        df = filtered_manifest,
-                                        group_by_var = "dataset_type",
-                                        title = NULL,
-                                        x_lab = "Type of dataset",
-                                        y_lab = "Number of Datasets",
-                                        fill = "#0d1c38")
+    dfamodules::mod_distribution_server(
+      id = "distribution_datatype",
+      df = filtered_manifest,
+      group_by_var = "dataset_type",
+      title = NULL,
+      x_lab = "Type of dataset",
+      y_lab = "Number of Datasets",
+      fill = "#0d1c38"
+    )
     
    # hide waiter
     waiter::waiter_hide()
@@ -196,12 +183,9 @@ app_server <- function( input, output, session ) {
   )
 
   # COLLECT WIDGET SELECTIONS  ################################################
+  
   mod_administrator_widgets_out <- dfamodules::mod_administrator_widgets_server("update_data_flow_status_1")
   
-  # output$tst <- renderPrint({
-  #   admin_manifest()
-  # })
-  # 
   # MAKE UPDATES TO MANIFEST  #################################################
   
   updated_manifest <- reactive({
@@ -212,10 +196,6 @@ app_server <- function( input, output, session ) {
     )
   })
   
-  # output$tst <- renderPrint({
-  #   admin_display_manifest()
-  # })
-  
   # SHOW MANIFEST PREVIEW  ####################################################
   # # get names of selected datasets
   
@@ -223,16 +203,17 @@ app_server <- function( input, output, session ) {
     mod_dataset_selection_out()$id
   })
   
-
-  dfamodules::mod_manifest_preview_server("highlight_datatable_1",
-                                             updated_manifest,
-                                             selected_rows,
-                                             "dataset_id")
+  dfamodules::mod_manifest_preview_server(
+    "highlight_datatable_1",
+    updated_manifest,
+    selected_rows,
+    "dataset_id"
+  )
   
-  # # BUTTON CLICK ACTIONS  #####################################################
-  # 
-  # # save updates for submission to a submission manifest reactiveVal
-  # # prevents user from having to fully submit a manifest to make new selections
+  # BUTTON CLICK ACTIONS  #####################################################
+
+  # save updates for submission to a submission manifest reactiveVal
+  # prevents user from having to fully submit a manifest to make new selections
   shiny::observeEvent(input$save_update, {
     admin_manifest(updated_manifest())
   })
@@ -242,10 +223,10 @@ app_server <- function( input, output, session ) {
   shiny::observeEvent(input$clear_update, {
     admin_manifest(original_manifest())
   })
+
+  # SUBMIT MODEL TO SYNAPSE   #################################################
   
-
-  # PREP MANIFEST FOR SYNAPSE SUBMISSION 
-
+  # prep manifest for submission
   manifest_submit <- shiny::reactive({
     req(dash_config_react())
     req(updated_manifest())
@@ -253,10 +234,9 @@ app_server <- function( input, output, session ) {
     dfamodules::prep_manifest_submit(
       updated_manifest(),
       dash_config_react()
-      )
+    )
   })
-
-  # SUBMIT MODEL TO SYNAPSE
+  
   dfamodules::mod_submit_model_server(
     id = "submit_model_1",
     dfs_manifest = manifest_submit,
