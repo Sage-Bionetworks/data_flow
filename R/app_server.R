@@ -94,7 +94,7 @@ app_server <- function( input, output, session ) {
     # User must have DOWNLOAD access to the DFA manifest.
     manifest_perm <- dfamodules::synapse_access(
       id = selected_dcc_config_list$manifest_dataset_id(),
-      access = "UPDATE",
+      access = "DOWNLOAD",
       auth = access_token
     )
     if (!isTRUE(manifest_perm)) {
