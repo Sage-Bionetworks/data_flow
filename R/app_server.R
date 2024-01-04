@@ -101,12 +101,13 @@ app_server <- function( input, output, session ) {
       shinypop::nx_report_error(
         title = "Permission error",
         message = tagList(
-          shiny::span("You don't have download permission to the DFA manifest",
+          shiny::p("You don't have download permission to the DFA manifest",
             shiny::a(href = paste0("https://www.synapse.org/#!Synapse:",
               selected_dcc_config_list$manifest_dataset_id()),
               selected_dcc_config_list$manifest_dataset_id(), taget = "_blank"
             )
-          )
+          ),
+          shiny::p("Refresh the app to try again or contact the DCC for help.")
         )
       )
       shinyjs::hide(selector = "#NXReportButton")
