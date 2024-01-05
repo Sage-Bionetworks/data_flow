@@ -13,6 +13,13 @@ app_ui <- function() {
 
     # initialize shinyjs
     shinyjs::useShinyjs(),
+    
+    # Add nx report for error messages
+    shinypop::use_notiflix_report(
+      width = "500px",
+      messageMaxLength = 10000,
+      titleMaxLength = 100
+    ),
 
     # define colors for icons in datatable
     # green check
