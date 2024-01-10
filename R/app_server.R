@@ -36,6 +36,8 @@ app_server <- function( input, output, session ) {
   
   session$userData$access_token <- access_token
   
+  shinyjs::hide(selector = ".sidebar-menu")
+  
   # SET UP REACTIVE VALUES  ###################################################
   
   # reactive dash config
@@ -78,6 +80,9 @@ app_server <- function( input, output, session ) {
         shiny::h3("Getting data. This may take a moment.", style = "color:white;")),
       color="#424874"
     )
+    
+    # show sidebar tabs
+    shinyjs::show(selector = ".sidebar-menu")
     
     # update reactiveVals
     selected_dcc_config_list$synapse_asset_view(mod_select_dcc_out()$selected_dcc_config$synapse_asset_view)
