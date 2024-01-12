@@ -15,9 +15,9 @@ client_id <- Sys.getenv("DFA_CLIENT_ID")
 client_secret <- Sys.getenv("DFA_CLIENT_SECRET")
 app_url <- Sys.getenv("DFA_APP_URL")
 
-if (is.null(client_id) || nchar(client_id) == 0) stop("missing DFA_CLIENT_ID environmental variable")
-if (is.null(client_secret) || nchar(client_secret) == 0) stop("missing DFA_CLIENT_SECRET environmental variable")
-if (is.null(app_url) || nchar(app_url) == 0) stop("missing DFA_APP_URL environmental variable")
+if (is.null(client_id) | nchar(client_id) == 0) stop("missing DFA_CLIENT_ID environmental variable")
+if (is.null(client_secret) | nchar(client_secret) == 0) stop("missing DFA_CLIENT_SECRET environmental variable")
+if (is.null(app_url) | nchar(app_url) == 0) stop("missing DFA_APP_URL environmental variable")
 
 # update port if running app locally
 if (interactive()) {
