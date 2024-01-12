@@ -1,5 +1,8 @@
 # READ IN CONFIG
-dcc_config <- readr::read_csv("https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/main/dcc_config.csv",
+dcc_config <- Sys.getenv("DFA_DCC_CONFIG")
+if (is.null(dcc_config) || nchar(dcc_config) == 0) stop("missing DFA_DCC_CONFIG environmental variable")
+
+dcc_config <- readr::read_csv(dcc_config,
                               show_col_types = FALSE)
 
 # GET SCHEMATIC API URL
@@ -7,11 +10,10 @@ schematic_api_url <- Sys.getenv("DFA_SCHEMATIC_API_URL")
 message("DFA is using ", schematic_api_url)
 
 # SET UP OAUTH
-oauth_client <- yaml::yaml.load_file("oauth_config.yml")
 
-client_id <- toString(oauth_client$client_id)
-client_secret <- toString(oauth_client$client_secret)
-app_url <- toString(oauth_client$app_url)
+client_id <- Sys.getenv("DFA_CLIENT_ID")
+client_secret <- Sys.getenv("DFA_CLIENT_SECRET")
+app_url <- Sys.getenv("DFA_APP_URL")
 
 if (is.null(client_id) || nchar(client_id) == 0) stop("missing DFA_CLIENT_ID environmental variable")
 if (is.null(client_secret) || nchar(client_secret) == 0) stop("missing DFA_CLIENT_SECRET environmental variable")
