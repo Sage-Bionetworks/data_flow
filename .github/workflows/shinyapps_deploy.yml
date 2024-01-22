@@ -26,25 +26,24 @@ jobs:
       SCHEMATIC_URL_STAGING: https://schematic-staging.api.sagebionetworks.org
       SCHEMATIC_URL_PROD: https://schematic.api.sagebionetworks.org
       # This should not be necessary for installing from public repo's however remotes::install_github() fails without it.
-      GITHUB_PAT:  ${{ secrets.GITHUB_TOKEN }}
-      
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y pip libcurl4-openssl-dev libpng-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libtiff-dev libxml2-dev
-        
+
       # this action checks out the $GITHUB_WORKSPACE repository so that the workflow can access it
       - uses: actions/checkout@v3
-        
+
       # this action sets up pandoc
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-          r-version: 'renv' 
+          r-version: 'renv'
 
       # install packages
       - name: Install rsconnect
@@ -53,34 +52,49 @@ jobs:
           renv::upgrade(version = "0.17.3")
           renv::install("rsconnect@0.8.29")
         shell: Rscript {0}
-        
+
       # this action activates renv
       - uses: r-lib/actions/setup-renv@v2
+
+      - name: Write R environmental variables
+        shell: bash
+        run: |
+          echo 'DFA_CLIENT_ID="${{ secrets.OAUTH_CLIENT_ID }}"' >> .Renviron
+          echo 'DFA_CLIENT_SECRET="${{ secrets.OAUTH_CLIENT_SECRET }}"' >> .Renviron
+          echo 'DFA_DCC_CONFIG="https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/main/dcc_config.csv"' >> .Renviron
+          echo 'GITHUB_PAT="${{ secrets.GITHUB_TOKEN }}"' >> .Renviron
 
         # deploy app using rsconnect
       - name: Authorize and deploy app
         run: |
           renv::restore(packages = "renv")
-          
+
           refName <- Sys.getenv("GITHUB_REF_NAME")
           repo <- Sys.getenv("GITHUB_REPOSITORY")
           appName <- strsplit(repo, "/")[[1]][2]
+
+          # read in .Renviron
+          renviron <- readLines(".Renviron")
 
           # if tag is v*.*.*, deploy to prod
           # if main to staging
           # otherwise to test
           if (grepl("v[0-9]+.[0-9]+.[0-9]+", refName)) {
             message("Deploying release version of app using schematic API production instance")
-            renviron <- "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_PROD }}'"
+            renviron <- c(renviron, "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_PROD }}'")
           } else if (refName == "main") {
             appName <- paste(appName, "staging", sep = "-")
-            renviron <- "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_STAGING }}'"
+            renviron <- c(renviron, "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_STAGING }}'")
             message("Deploying staging version of app using schematic API staging instance")
           } else {
             appName <- paste(appName, "testing", sep = "-")
-            renviron <- "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_DEV }}'"
+            renviron <- c(renviron, "DFA_SCHEMATIC_API_URL = '${{ env.SCHEMATIC_URL_DEV }}'")
             message("Deploying testing version of app using schematic API dev instance")
           }
+
+          # add oauth configuration to .renviron
+          appUrl<- sprintf("https://%s.shinyapps.io/%s", rsConnectUser, appName)
+          renviron <- c(renviron, sprintf("DFA_APP_URL=%s%", appUrl))
 
           # write .Renviron
           writeLines(renviron, ".Renviron") 
@@ -92,27 +106,14 @@ jobs:
           rsConnectUser <-"${{ secrets.RSCONNECT_USER }}"
           rsConnectToken <- "${{ secrets.RSCONNECT_TOKEN }}"
           rsConnectSecret <- "${{ secrets.RSCONNECT_SECRET }}"
- 
-          # create config file
-          config <- "client_id: ${{ secrets.OAUTH_CLIENT_ID }}"
-          config <- c(config, "client_secret: ${{ secrets.OAUTH_CLIENT_SECRET }}")
-          appUrl<- sprintf("https://%s.shinyapps.io/%s", rsConnectUser, appName)
-          config <- c(config, sprintf("app_url: %s", appUrl))
-         
-          # write config file
-          configFileConn<-file("oauth_config.yml")
-          tryCatch(
-             writeLines(config, configFileConn),
-             finally=close(configFileConn)
-          )
 
           # set account info
           rsconnect::setAccountInfo(rsConnectUser, rsConnectToken, rsConnectSecret)
-          
+
           # get app names. If app exists, configure then deploy. Otherwise
           # deploy then configure.
           apps <- rsconnect::applications()$name
-          
+
           if (appName %in% apps) {
             rsconnect::configureApp(appName = appName, size = "xxxlarge", logLevel = "verbose")
             rsconnect::deployApp(appName = appName)
