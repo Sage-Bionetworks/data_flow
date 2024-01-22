@@ -98,7 +98,7 @@ jobs:
 
           # add oauth configuration to .renviron
           appUrl <- sprintf("https://%s.shinyapps.io/%s", rsConnectUser, appName)
-          renviron <- c(renviron, sprintf("DFA_APP_URL=%s%", appUrl))
+          renviron <- c(renviron, sprintf("DFA_APP_URL=%s", appUrl))
 
           # write .Renviron
           writeLines(renviron, ".Renviron") 
