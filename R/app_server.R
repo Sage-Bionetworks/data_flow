@@ -62,12 +62,12 @@ app_server <- function( input, output, session ) {
 
   # SELECT A DCC  #############################################################
   mod_select_dcc_out <- dfamodules::mod_select_dcc_server("select_dcc",
-                                                          dcc_config,
+                                                          tenants_config_path ,
                                                           access_token)
   
   # CONFIGURE APP ############################################################
   observeEvent(mod_select_dcc_out()$btn_click, {
-    
+
     # move to dashboard page
     shinydashboard::updateTabItems(session = session,
                                    inputId = "tabs",
@@ -85,12 +85,13 @@ app_server <- function( input, output, session ) {
     shinyjs::show(selector = ".sidebar-menu")
     
     # update reactiveVals
-    selected_dcc_config_list$synapse_asset_view(mod_select_dcc_out()$selected_dcc_config$synapse_asset_view)
-    selected_dcc_config_list$manifest_dataset_id(mod_select_dcc_out()$selected_dcc_config$manifest_dataset_id)
-    selected_dcc_config_list$project_name(mod_select_dcc_out()$selected_dcc_config$project_name)
-    selected_dcc_config_list$schema_url(mod_select_dcc_out()$selected_dcc_config$schema_url)
-    selected_dcc_config_list$icon(mod_select_dcc_out()$selected_dcc_config$icon)
+    selected_dcc_config_list$synapse_asset_view(mod_select_dcc_out()$selected_dcc_config$dcc$synapse_asset_view)
+    selected_dcc_config_list$manifest_dataset_id(mod_select_dcc_out()$selected_dcc_config$dcc$manifest_dataset_id)
+    selected_dcc_config_list$project_name(mod_select_dcc_out()$selected_dcc_config$dcc$name)
+    selected_dcc_config_list$schema_url(mod_select_dcc_out()$selected_dcc_config$dcc$data_model_url)
+    selected_dcc_config_list$icon(mod_select_dcc_out()$selected_dcc_config$dfa_dashboard$icon)
     
+    # Check that user has appropriate permissions to use DFA
     # User must have DOWNLOAD access to the DFA manifest.
     manifest_perm <- dfamodules::synapse_access(
       id = selected_dcc_config_list$manifest_dataset_id(),
@@ -126,26 +127,26 @@ app_server <- function( input, output, session ) {
       access_token = access_token,
       base_url = schematic_api_url
       )
-
+    
     # prep manifest for app
     prepped_manifest <- dfamodules::prep_manifest_dfa(
       manifest = manifest_obj$content,
       config = dash_config
     )
-    
+
     # update reactiveVals
     original_manifest(prepped_manifest)
     admin_manifest(prepped_manifest)
-    
+
     dash_config_react(dash_config)
-    
+
     # FILTER MANIFEST FOR DASH  ###############################################
 
     filtered_manifest <- dfamodules::mod_datatable_filters_server(
       "datatable_filters_1",
       original_manifest
       )
-    
+
     # DATASET DASH  ###########################################################
 
     dfamodules::mod_datatable_dashboard_server(
@@ -153,9 +154,9 @@ app_server <- function( input, output, session ) {
       filtered_manifest,
       dash_config_react
       )
-    
+
     # DATASET DASH VIZ : DISTRIBUTIONS ########################################
-    
+
     dfamodules::mod_distribution_server(
       id = "distribution_contributor",
       df = filtered_manifest,
@@ -165,7 +166,7 @@ app_server <- function( input, output, session ) {
       y_lab = "Number of Datasets",
       fill = "#0d1c38"
     )
-    
+
     dfamodules::mod_distribution_server(
       id = "distribution_datatype",
       df = filtered_manifest,
@@ -175,7 +176,7 @@ app_server <- function( input, output, session ) {
       y_lab = "Number of Datasets",
       fill = "#0d1c38"
     )
-    
+
    # hide waiter
     waiter::waiter_hide()
 

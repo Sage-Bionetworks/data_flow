@@ -79,8 +79,7 @@ app_ui <- function() {
             tabName = "tab_select_dcc",
             shiny::fluidRow(
               dfamodules::mod_select_dcc_ui(
-                "select_dcc",
-                dcc_config
+                "select_dcc"
               )
             )
           ),
