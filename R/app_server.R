@@ -23,11 +23,13 @@ app_server <- function( input, output, session ) {
   )
   
   # get the access_token and userinfo token
-  req <- httr::POST(redirect_url, 
-                    encode = "form", 
-                    body = "", 
-                    httr::authenticate(app$key, app$secret, type = "basic"), 
-                    config = list())
+  req <- httr::POST(
+    redirect_url,
+    encode = "form",
+    body = "",
+    httr::authenticate(app$key, app$secret, type = "basic"),
+    config = list()
+    )
   # Stop the code if anything other than 2XX status code is returned
   
   httr::stop_for_status(req, task = "get an access token")
@@ -61,17 +63,21 @@ app_server <- function( input, output, session ) {
   
 
   # SELECT A DCC  #############################################################
-  mod_select_dcc_out <- dfamodules::mod_select_dcc_server("select_dcc",
-                                                          dcc_config,
-                                                          access_token)
+  mod_select_dcc_out <- dfamodules::mod_select_dcc_server(
+    id = "select_dcc",
+    tenants_config_path = tenants_config_path ,
+    access_token = access_token
+    )
   
   # CONFIGURE APP ############################################################
   observeEvent(mod_select_dcc_out()$btn_click, {
-    
+
     # move to dashboard page
-    shinydashboard::updateTabItems(session = session,
-                                   inputId = "tabs",
-                                   selected = "tab_dashboard")
+    shinydashboard::updateTabItems(
+      session = session,
+      inputId = "tabs",
+      selected = "tab_dashboard"
+    )
     
     # show waiter on button click
     waiter::waiter_show(
@@ -85,12 +91,23 @@ app_server <- function( input, output, session ) {
     shinyjs::show(selector = ".sidebar-menu")
     
     # update reactiveVals
-    selected_dcc_config_list$synapse_asset_view(mod_select_dcc_out()$selected_dcc_config$synapse_asset_view)
-    selected_dcc_config_list$manifest_dataset_id(mod_select_dcc_out()$selected_dcc_config$manifest_dataset_id)
-    selected_dcc_config_list$project_name(mod_select_dcc_out()$selected_dcc_config$project_name)
-    selected_dcc_config_list$schema_url(mod_select_dcc_out()$selected_dcc_config$schema_url)
-    selected_dcc_config_list$icon(mod_select_dcc_out()$selected_dcc_config$icon)
+    selected_dcc_config_list$synapse_asset_view(
+      mod_select_dcc_out()$selected_dcc_config$dcc$synapse_asset_view
+    )
+    selected_dcc_config_list$manifest_dataset_id(
+      mod_select_dcc_out()$selected_dcc_config$dcc$manifest_dataset_id
+      )
+    selected_dcc_config_list$project_name(
+      mod_select_dcc_out()$selected_dcc_config$dcc$name
+      )
+    selected_dcc_config_list$schema_url(
+      mod_select_dcc_out()$selected_dcc_config$dcc$data_model_url
+      )
+    selected_dcc_config_list$icon(
+      mod_select_dcc_out()$selected_dcc_config$dfa_dashboard$icon
+      )
     
+    # Check that user has appropriate permissions to use DFA
     # User must have DOWNLOAD access to the DFA manifest.
     manifest_perm <- dfamodules::synapse_access(
       id = selected_dcc_config_list$manifest_dataset_id(),
@@ -114,10 +131,12 @@ app_server <- function( input, output, session ) {
       waiter::waiter_hide()
     }
 
+    # generate dashboard config file
     dash_config <- dfamodules::generate_dashboard_config(
       schema_url = selected_dcc_config_list$schema_url(),
       icon = selected_dcc_config_list$icon(),
-      base_url = schematic_api_url)
+      base_url = schematic_api_url
+      )
 
     # download manifest
     manifest_obj <- dfamodules::dataset_manifest_download(
@@ -126,26 +145,26 @@ app_server <- function( input, output, session ) {
       access_token = access_token,
       base_url = schematic_api_url
       )
-
+    
     # prep manifest for app
     prepped_manifest <- dfamodules::prep_manifest_dfa(
       manifest = manifest_obj$content,
       config = dash_config
     )
-    
+
     # update reactiveVals
     original_manifest(prepped_manifest)
     admin_manifest(prepped_manifest)
-    
+
     dash_config_react(dash_config)
-    
+
     # FILTER MANIFEST FOR DASH  ###############################################
 
     filtered_manifest <- dfamodules::mod_datatable_filters_server(
       "datatable_filters_1",
       original_manifest
       )
-    
+
     # DATASET DASH  ###########################################################
 
     dfamodules::mod_datatable_dashboard_server(
@@ -153,9 +172,9 @@ app_server <- function( input, output, session ) {
       filtered_manifest,
       dash_config_react
       )
-    
+
     # DATASET DASH VIZ : DISTRIBUTIONS ########################################
-    
+
     dfamodules::mod_distribution_server(
       id = "distribution_contributor",
       df = filtered_manifest,
@@ -165,7 +184,7 @@ app_server <- function( input, output, session ) {
       y_lab = "Number of Datasets",
       fill = "#0d1c38"
     )
-    
+
     dfamodules::mod_distribution_server(
       id = "distribution_datatype",
       df = filtered_manifest,
@@ -175,7 +194,7 @@ app_server <- function( input, output, session ) {
       y_lab = "Number of Datasets",
       fill = "#0d1c38"
     )
-    
+
    # hide waiter
     waiter::waiter_hide()
 
@@ -212,7 +231,9 @@ app_server <- function( input, output, session ) {
 
   # COLLECT WIDGET SELECTIONS  ################################################
   
-  mod_administrator_widgets_out <- dfamodules::mod_administrator_widgets_server("update_data_flow_status_1")
+  mod_administrator_widgets_out <- dfamodules::mod_administrator_widgets_server(
+    id = "update_data_flow_status_1"
+    )
   
   # MAKE UPDATES TO MANIFEST  #################################################
   
@@ -232,10 +253,10 @@ app_server <- function( input, output, session ) {
   })
   
   dfamodules::mod_manifest_preview_server(
-    "highlight_datatable_1",
-    updated_manifest,
-    selected_rows,
-    "dataset_id"
+    id = "highlight_datatable_1",
+    df = updated_manifest,
+    selection = selected_rows,
+    df_match_colname = "dataset_id"
   )
   
   # BUTTON CLICK ACTIONS  #####################################################
@@ -260,8 +281,9 @@ app_server <- function( input, output, session ) {
     req(updated_manifest())
     
     dfamodules::prep_manifest_submit(
-      updated_manifest(),
-      dash_config_react()
+      manifest = updated_manifest(),
+      config = dash_config_react(),
+      na_replace = ""
     )
   })
   

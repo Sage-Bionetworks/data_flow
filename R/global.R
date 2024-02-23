@@ -1,16 +1,12 @@
-# READ IN CONFIG
-dcc_config <- Sys.getenv("DFA_DCC_CONFIG")
-if (is.null(dcc_config) || nchar(dcc_config) == 0) stop("missing DFA_DCC_CONFIG environmental variable")
-
-dcc_config <- readr::read_csv(dcc_config,
-                              show_col_types = FALSE)
+# READ IN TENANTS.JSON
+tenants_config_path <- Sys.getenv("DFA_DCC_CONFIG")
+if (is.null(tenants_config_path) || nchar(tenants_config_path) == 0) stop("missing DFA_DCC_CONFIG environmental variable")
 
 # GET SCHEMATIC API URL
 schematic_api_url <- Sys.getenv("DFA_SCHEMATIC_API_URL")
 message("DFA is using ", schematic_api_url)
 
 # SET UP OAUTH
-
 client_id <- Sys.getenv("DFA_CLIENT_ID")
 client_secret <- Sys.getenv("DFA_CLIENT_SECRET")
 app_url <- Sys.getenv("DFA_APP_URL")

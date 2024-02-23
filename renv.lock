@@ -416,14 +416,14 @@
     },
     "dfamodules": {
       "Package": "dfamodules",
-      "Version": "23.12.1",
+      "Version": "24.2.1",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "Sage-Bionetworks",
       "RemoteRepo": "dfamodules",
-      "RemoteRef": "main",
-      "RemoteSha": "186060a0107db12255b1c65275e9dfc3e77be53e",
+      "RemoteRef": "dev",
+      "RemoteSha": "b195b41b40453b98bbc09ae81cf21155fb2a6745",
       "Requirements": [
         "DT",
         "dplyr",
@@ -442,7 +442,7 @@
         "shinyjs",
         "waiter"
       ],
-      "Hash": "05924f504f548e7b17adb4bb6fce1c37"
+      "Hash": "8e16a925b17b61a27fc8c3ae2273c669"
     },
     "diffobj": {
       "Package": "diffobj",
@@ -492,9 +492,9 @@
     },
     "dplyr": {
       "Package": "dplyr",
-      "Version": "1.1.3",
+      "Version": "1.1.4",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "RSPM",
       "Requirements": [
         "R",
         "R6",
@@ -511,7 +511,7 @@
         "utils",
         "vctrs"
       ],
-      "Hash": "e85ffbebaad5f70e1a2e2ef4302b4949"
+      "Hash": "fedd9d00c2944ff00a0e2696ccf048ec"
     },
     "ellipsis": {
       "Package": "ellipsis",
@@ -888,13 +888,13 @@
     },
     "jsonlite": {
       "Package": "jsonlite",
-      "Version": "1.8.7",
+      "Version": "1.8.8",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "methods"
       ],
-      "Hash": "266a20443ca13c65688b2116d5220f76"
+      "Hash": "e1b9c55281c5adc4dd113652d9e26768"
     },
     "knitr": {
       "Package": "knitr",
@@ -1627,7 +1627,14 @@
       "RemoteUsername": "dreamRs",
       "RemoteRepo": "shinypop",
       "RemoteRef": "master",
-      "RemoteSha": "7745a0b1ecf31f783fa59603f3c5cede0c948118"
+      "RemoteSha": "7745a0b1ecf31f783fa59603f3c5cede0c948118",
+      "Requirements": [
+        "R",
+        "htmltools",
+        "jsonlite",
+        "shiny"
+      ],
+      "Hash": "ee29555190ce6a726046a5909cc91d9b"
     },
     "sourcetools": {
       "Package": "sourcetools",
@@ -1866,9 +1873,9 @@
     },
     "vctrs": {
       "Package": "vctrs",
-      "Version": "0.6.2",
+      "Version": "0.6.5",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "RSPM",
       "Requirements": [
         "R",
         "cli",
@@ -1876,7 +1883,7 @@
         "lifecycle",
         "rlang"
       ],
-      "Hash": "a745bda7aff4734c17294bb41d4e4607"
+      "Hash": "c03fa420630029418f7e6da3667aac4a"
     },
     "viridisLite": {
       "Package": "viridisLite",
