@@ -61,7 +61,7 @@ jobs:
         run: |
           echo 'DFA_CLIENT_ID="${{ secrets.OAUTH_CLIENT_ID }}"' >> .Renviron
           echo 'DFA_CLIENT_SECRET="${{ secrets.OAUTH_CLIENT_SECRET }}"' >> .Renviron
-          echo 'DFA_DCC_CONFIG="https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/main/dcc_config.csv"' >> .Renviron
+          echo 'DFA_DCC_CONFIG="https://raw.githubusercontent.com/Sage-Bionetworks/data_flow_config/dev/tenants.json"' >> .Renviron
           echo 'GITHUB_PAT="${{ secrets.GITHUB_TOKEN }}"' >> .Renviron
 
         # deploy app using rsconnect
