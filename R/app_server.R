@@ -55,31 +55,21 @@ app_server <- function( input, output, session ) {
   filtered_manifest_react <- reactiveVal(NULL)
   
   # capture selected dcc configuration in a list
-  # selected_dcc_config_list <- list(
-  #   project_name = reactiveVal(NULL),
-  #   synapse_asset_view = reactiveVal(NULL),
-  #   manifest_dataset_id = reactiveVal(NULL),
-  #   schema_url = reactiveVal(NULL),
-  #   icon = reactiveVal(NULL)
-  # )
+  selected_dcc_config_list <- list(
+    synapse_asset_view = reactiveVal(NULL),
+    manifest_dataset_id = reactiveVal(NULL),
+    schema_url = reactiveVal(NULL)
+  )
   
+  selected_dcc_config <- reactiveVal(NULL)
 
   # SELECT A DCC  #############################################################
-  # mod_select_dcc_out <- reactive({
-  #   dfamodules::mod_select_dcc_server(
-  #     id = "select_dcc",
-  #     tenants_config_path = tenants_config_path ,
-  #     access_token = access_token
-  #     )
-  #   })
 
   mod_select_dcc_out <- dfamodules::mod_select_dcc_server(
     id = "select_dcc",
     tenants_config_path = tenants_config_path ,
     access_token = access_token
   )
-  
-  selected_dcc_config <- reactiveVal(NULL)
   
   # CONFIGURE APP ############################################################
   observeEvent(mod_select_dcc_out()$btn_click, {
@@ -104,6 +94,17 @@ app_server <- function( input, output, session ) {
 
     # show sidebar tabs
     shinyjs::show(selector = ".sidebar-menu")
+    
+    # update reactiveVals
+    selected_dcc_config_list$synapse_asset_view(
+      mod_select_dcc_out()$selected_dcc_config$dcc$synapse_asset_view
+    )
+    selected_dcc_config_list$manifest_dataset_id(
+      mod_select_dcc_out()$selected_dcc_config$dcc$manifest_dataset_id
+    )
+    selected_dcc_config_list$schema_url(
+      mod_select_dcc_out()$selected_dcc_config$dcc$data_model_url
+    )
     
     # Check that user has appropriate permissions to use DFA
     # User must have DOWNLOAD access to the DFA manifest.
@@ -207,103 +208,103 @@ app_server <- function( input, output, session ) {
   
   # ADMINISTRATOR  #############################################################
   # SELECT STORAGE PROJECT #####################################################
-  # 
-  # selected_project_id <- reactiveVal(NULL)
-  # 
-  # observe({
-  # 
-  #   if (input$tabs == "tab_administrator") {
-  #     
-  #     print(selected_dcc_config()$dcc$synapse_asset_view)
-  #     
-  #     # FIXME THIS IS ERRORING OUT
-  #     mod_select_storage_project_out <- dfamodules::mod_select_storage_project_server(
-  #       id = "select_storage_project_1",
-  #       asset_view = selected_dcc_config$dcc$synapse_asset_view,
-  #       access_token = access_token,
-  #       base_url = schematic_api_url)
-  # 
-  #     selected_project_id(mod_select_storage_project_out())
-  #   }
-  # })
 
-  # # SELECT DATASETS  ##########################################################
-  # 
-  # mod_dataset_selection_out <- dfamodules::mod_dataset_selection_server(
-  #   id = "dataset_selection_1",
-  #   storage_project_id = selected_project_id,
-  #   asset_view = selected_dcc_config_list$synapse_asset_view,
-  #   access_token = access_token,
-  #   base_url = schematic_api_url
-  # )
-  # 
-  # # COLLECT WIDGET SELECTIONS  ################################################
-  # 
-  # mod_administrator_widgets_out <- dfamodules::mod_administrator_widgets_server(
-  #   id = "update_data_flow_status_1"
-  #   )
-  # 
-  # # MAKE UPDATES TO MANIFEST  #################################################
-  # 
-  # updated_manifest <- reactive({
-  #   dfamodules::apply_administrator_selections(
-  #     dataflow_manifest = admin_manifest(),
-  #     administrator_widget_output = mod_administrator_widgets_out(),
-  #     dataset_selection_module_output = mod_dataset_selection_out()
-  #   )
-  # })
-  # 
-  # # SHOW MANIFEST PREVIEW  ####################################################
-  # # # get names of selected datasets
-  # 
-  # selected_rows <- shiny::reactive({
-  #   mod_dataset_selection_out()$id
-  # })
-  # 
-  # dfamodules::mod_manifest_preview_server(
-  #   id = "highlight_datatable_1",
-  #   df = updated_manifest,
-  #   selection = selected_rows,
-  #   df_match_colname = "dataset_id"
-  # )
-  # 
-  # # BUTTON CLICK ACTIONS  #####################################################
-  # 
-  # # save updates for submission to a submission manifest reactiveVal
-  # # prevents user from having to fully submit a manifest to make new selections
-  # shiny::observeEvent(input$save_update, {
-  #   admin_manifest(updated_manifest())
-  # })
-  # 
-  # # clear updates
-  # # also clears the submission manifest of any cached updates
-  # shiny::observeEvent(input$clear_update, {
-  #   admin_manifest(original_manifest())
-  # })
-  # 
-  # # SUBMIT MODEL TO SYNAPSE   #################################################
-  # 
-  # # prep manifest for submission
-  # manifest_submit <- shiny::reactive({
-  #   req(dash_config_react())
-  #   req(updated_manifest())
-  #   
-  #   dfamodules::prep_manifest_submit(
-  #     manifest = updated_manifest(),
-  #     config = dash_config_react(),
-  #     na_replace = ""
-  #   )
-  # })
-  # 
-  # dfamodules::mod_submit_model_server(
-  #   id = "submit_model_1",
-  #   dfs_manifest = manifest_submit,
-  #   data_type = NULL,
-  #   asset_view = selected_dcc_config_list$synapse_asset_view,
-  #   dataset_id = selected_dcc_config_list$manifest_dataset_id,
-  #   manifest_dir = "./manifest",
-  #   access_token = access_token,
-  #   base_url = schematic_api_url,
-  #   schema_url = selected_dcc_config_list$schema_url
-  #   )
+  selected_project_id <- reactiveVal(NULL)
+
+  observe({
+
+    if (input$tabs == "tab_administrator") {
+
+      print(selected_dcc_config()$dcc$synapse_asset_view)
+
+      # FIXME THIS IS ERRORING OUT
+      mod_select_storage_project_out <- dfamodules::mod_select_storage_project_server(
+        id = "select_storage_project_1",
+        asset_view = selected_dcc_config_list$synapse_asset_view,
+        access_token = access_token,
+        base_url = schematic_api_url)
+
+      selected_project_id(mod_select_storage_project_out())
+    }
+  })
+
+  # SELECT DATASETS  ##########################################################
+
+  mod_dataset_selection_out <- dfamodules::mod_dataset_selection_server(
+    id = "dataset_selection_1",
+    storage_project_id = selected_project_id,
+    asset_view = selected_dcc_config_list$synapse_asset_view,
+    access_token = access_token,
+    base_url = schematic_api_url
+  )
+
+  # COLLECT WIDGET SELECTIONS  ################################################
+
+  mod_administrator_widgets_out <- dfamodules::mod_administrator_widgets_server(
+    id = "update_data_flow_status_1"
+    )
+
+  # MAKE UPDATES TO MANIFEST  #################################################
+
+  updated_manifest <- reactive({
+    dfamodules::apply_administrator_selections(
+      dataflow_manifest = admin_manifest(),
+      administrator_widget_output = mod_administrator_widgets_out(),
+      dataset_selection_module_output = mod_dataset_selection_out()
+    )
+  })
+
+  # SHOW MANIFEST PREVIEW  ####################################################
+  # get names of selected datasets
+
+  selected_rows <- shiny::reactive({
+    mod_dataset_selection_out()$id
+  })
+
+  dfamodules::mod_manifest_preview_server(
+    id = "highlight_datatable_1",
+    df = updated_manifest,
+    selection = selected_rows,
+    df_match_colname = "dataset_id"
+  )
+
+  # BUTTON CLICK ACTIONS  #####################################################
+
+  # save updates for submission to a submission manifest reactiveVal
+  # prevents user from having to fully submit a manifest to make new selections
+  shiny::observeEvent(input$save_update, {
+    admin_manifest(updated_manifest())
+  })
+
+  # clear updates
+  # also clears the submission manifest of any cached updates
+  shiny::observeEvent(input$clear_update, {
+    admin_manifest(original_manifest())
+  })
+
+  # SUBMIT MODEL TO SYNAPSE   #################################################
+
+  # prep manifest for submission
+  manifest_submit <- shiny::reactive({
+    req(dash_config_react())
+    req(updated_manifest())
+
+    dfamodules::prep_manifest_submit(
+      manifest = updated_manifest(),
+      config = dash_config_react(),
+      na_replace = ""
+    )
+  })
+
+  dfamodules::mod_submit_model_server(
+    id = "submit_model_1",
+    dfs_manifest = manifest_submit,
+    data_type = NULL,
+    asset_view = selected_dcc_config_list$synapse_asset_view,
+    dataset_id = selected_dcc_config_list$manifest_dataset_id,
+    manifest_dir = "./manifest",
+    access_token = access_token,
+    base_url = schematic_api_url,
+    schema_url = selected_dcc_config_list$schema_url
+    )
 }
