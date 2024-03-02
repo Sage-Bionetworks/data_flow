@@ -8,8 +8,6 @@
 
 app_server <- function( input, output, session ) {
   
-  print(dfamodules::generate_dashboard_config)
-  
   # Your application server logic
   options(shiny.reactlog = TRUE)
   
@@ -139,10 +137,7 @@ app_server <- function( input, output, session ) {
       dcc_config = selected_dcc_config(),
       base_url = schematic_api_url
     )
-    
-    print(selected_dcc_config()$dcc$synapse_asset_view)
-    print(selected_dcc_config()$dcc$manifest_dataset_id)
-    
+
     # FIXME: Show error when manifest download fails
     # download manifest
     manifest_obj <- dfamodules::dataset_manifest_download(
@@ -215,9 +210,6 @@ app_server <- function( input, output, session ) {
 
     if (input$tabs == "tab_administrator") {
 
-      print(selected_dcc_config()$dcc$synapse_asset_view)
-
-      # FIXME THIS IS ERRORING OUT
       mod_select_storage_project_out <- dfamodules::mod_select_storage_project_server(
         id = "select_storage_project_1",
         asset_view = selected_dcc_config_list$synapse_asset_view,
