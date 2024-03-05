@@ -73,7 +73,6 @@ app_server <- function( input, output, session ) {
   observeEvent(mod_select_dcc_out()$btn_click, {
     
     selected_dcc_config(mod_select_dcc_out()$selected_dcc_config)
-    print(selected_dcc_config()$dcc$data_model_url)
 
     # move to dashboard page
     shinydashboard::updateTabItems(
