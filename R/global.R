@@ -1,3 +1,15 @@
+## SET GLOBAL VARS
+
+# READ IN BRANCH NAME
+ref <- Sys.getenv("DFA_REF")
+
+# SET FAVICON URL
+FAVICON_URL <- file.path(
+  "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow",
+  ref, # FIXME: Automate branch via env variable
+  "inst/app/www/favicon.ico"
+)
+
 # READ IN TENANTS.JSON
 tenants_config_path <- Sys.getenv("DFA_DCC_CONFIG")
 if (is.null(tenants_config_path) || nchar(tenants_config_path) == 0) stop("missing DFA_DCC_CONFIG environmental variable")
@@ -64,9 +76,3 @@ api <- httr::oauth_endpoint(
 
 # The 'openid' scope is required by the protocol for retrieving user information.
 scope <- "openid view download modify"
-
-FAVICON_URL <- file.path(
-  "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow",
-  "dev", # FIXME: Automate branch via env variable
-  "inst/app/www/favicon.ico"
-)
