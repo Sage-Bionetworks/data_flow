@@ -71,7 +71,7 @@ app_ui <- function() {
         waiter::use_waiter(),
         waiter::waiter_preloader(
           html = shiny::tagList(
-            shiny::img(src = "www/loading.gif"),
+            shiny::img(src = "www/sage-loader.svg"),
             shiny::h4("Retrieving Synapse information...", style = "color:white;")
           ),
           color = "#424874"
