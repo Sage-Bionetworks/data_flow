@@ -84,7 +84,7 @@ app_server <- function( input, output, session ) {
     # show waiter on button click
     waiter::waiter_show(
       html = shiny::tagList(
-        shiny::img(src = "www/loading.gif"),
+        shiny::img(src = "www/sage-loader.svg"),
         shiny::h3("Getting data. This may take a moment.", style = "color:white;")),
       color="#424874"
     )

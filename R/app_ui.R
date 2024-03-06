@@ -10,6 +10,13 @@ app_ui <- function() {
   shiny::tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+    
+    tags$head(
+      tags$link(
+        rel="shortcut icon", 
+        href=FAVICON_URL
+        )
+      ),
 
     # initialize shinyjs
     shinyjs::useShinyjs(),
@@ -64,7 +71,7 @@ app_ui <- function() {
         waiter::use_waiter(),
         waiter::waiter_preloader(
           html = shiny::tagList(
-            shiny::img(src = "www/loading.gif"),
+            shiny::img(src = "www/sage-loader.svg"),
             shiny::h4("Retrieving Synapse information...", style = "color:white;")
           ),
           color = "#424874"
@@ -154,7 +161,7 @@ golem_add_external_resources <- function() {
   )
 
   tags$head(
-    favicon(),
+    favicon(resources_path = app_sys("app/www")),
     bundle_resources(
       path = app_sys("app/www"),
       app_title = "Data Flow"
