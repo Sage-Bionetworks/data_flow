@@ -65,3 +65,8 @@ api <- httr::oauth_endpoint(
 # The 'openid' scope is required by the protocol for retrieving user information.
 scope <- "openid view download modify"
 
+FAVICON_URL <- file.path(
+  "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow",
+  "dev", # FIXME: Automate branch via env variable
+  "inst/app/www/favicon.ico"
+)
