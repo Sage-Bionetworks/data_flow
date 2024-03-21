@@ -1,22 +1,22 @@
 ## SET GLOBAL VARS
-
 # READ IN BRANCH NAME
 ref <- Sys.getenv("DFA_REF")
 
 # SET FAVICON URL
 FAVICON_URL <- file.path(
   "https://raw.githubusercontent.com/Sage-Bionetworks/data_flow",
-  ref, # FIXME: Automate branch via env variable
+  ref,
   "inst/app/www/favicon.ico"
 )
 
 # READ IN TENANTS.JSON
 tenants_config_path <- Sys.getenv("DFA_DCC_CONFIG")
 if (is.null(tenants_config_path) || nchar(tenants_config_path) == 0) stop("missing DFA_DCC_CONFIG environmental variable")
+message("Tenants.json path: ", tenants_config_path)
 
 # GET SCHEMATIC API URL
 schematic_api_url <- Sys.getenv("DFA_SCHEMATIC_API_URL")
-message("DFA is using ", schematic_api_url)
+message("Schematic base URL: ", schematic_api_url)
 
 # SET UP OAUTH
 client_id <- Sys.getenv("DFA_CLIENT_ID")
