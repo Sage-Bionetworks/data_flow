@@ -75,6 +75,18 @@ app_server <- function( input, output, session ) {
   # CONFIGURE APP ############################################################
   observeEvent(mod_select_dcc_out()$btn_click, {
     
+    # update reactiveVals
+    # FIXME: redundant (could get rid of selected_dcc_config_list)
+    selected_dcc_config_list$synapse_asset_view(
+      mod_select_dcc_out()$selected_dcc_config$dcc$synapse_asset_view
+    )
+    selected_dcc_config_list$manifest_dataset_id(
+      mod_select_dcc_out()$selected_dcc_config$dcc$manifest_dataset_id
+    )
+    selected_dcc_config_list$schema_url(
+      mod_select_dcc_out()$selected_dcc_config$dcc$data_model_url
+    )
+    
     selected_dcc_config(mod_select_dcc_out()$selected_dcc_config)
 
     # move to dashboard page
@@ -102,8 +114,6 @@ app_server <- function( input, output, session ) {
       access = "CHANGE_PERMISSIONS",
       auth = access_token
     )
-    
-    print(manifest_admin_perm)
     
     if (isTRUE(manifest_admin_perm)) {
       shinyjs::show(selector = "a[data-value='tab_administrator']")
