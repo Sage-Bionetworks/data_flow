@@ -30,15 +30,18 @@ app_server <- function( input, output, session ) {
     httr::authenticate(app$key, app$secret, type = "basic"),
     config = list()
     )
-  # Stop the code if anything other than 2XX status code is returned
   
+  # Stop the code if anything other than 2XX status code is returned
   httr::stop_for_status(req, task = "get an access token")
   token_response <- httr::content(req, type = NULL)
   access_token <- token_response$access_token
   
   session$userData$access_token <- access_token
   
+  # hide things
+  # sidebar
   shinyjs::hide(selector = ".sidebar-menu")
+  shinyjs::hide(selector = "a[data-value='tab_administrator']")
   
   # SET UP REACTIVE VALUES  ###################################################
   
@@ -72,6 +75,18 @@ app_server <- function( input, output, session ) {
   # CONFIGURE APP ############################################################
   observeEvent(mod_select_dcc_out()$btn_click, {
     
+    # update reactiveVals
+    # FIXME: redundant (could get rid of selected_dcc_config_list)
+    selected_dcc_config_list$synapse_asset_view(
+      mod_select_dcc_out()$selected_dcc_config$dcc$synapse_asset_view
+    )
+    selected_dcc_config_list$manifest_dataset_id(
+      mod_select_dcc_out()$selected_dcc_config$dcc$manifest_dataset_id
+    )
+    selected_dcc_config_list$schema_url(
+      mod_select_dcc_out()$selected_dcc_config$dcc$data_model_url
+    )
+    
     selected_dcc_config(mod_select_dcc_out()$selected_dcc_config)
 
     # move to dashboard page
@@ -89,28 +104,31 @@ app_server <- function( input, output, session ) {
       color="#424874"
     )
 
-    # show sidebar tabs
+    # show sidebar menu
     shinyjs::show(selector = ".sidebar-menu")
     
-    # update reactiveVals
-    selected_dcc_config_list$synapse_asset_view(
-      mod_select_dcc_out()$selected_dcc_config$dcc$synapse_asset_view
+    # check user's access
+    # show admin tab if user has ADMIN access to data flow manifest
+    manifest_admin_perm <- dfamodules::synapse_access(
+      id = selected_dcc_config()$dcc$manifest_dataset_id,
+      access = "CHANGE_PERMISSIONS",
+      auth = access_token
     )
-    selected_dcc_config_list$manifest_dataset_id(
-      mod_select_dcc_out()$selected_dcc_config$dcc$manifest_dataset_id
-    )
-    selected_dcc_config_list$schema_url(
-      mod_select_dcc_out()$selected_dcc_config$dcc$data_model_url
-    )
+    
+    if (isTRUE(manifest_admin_perm)) {
+      shinyjs::show(selector = "a[data-value='tab_administrator']")
+    } else {
+      shinyjs::hide(selector = "a[data-value='tab_administrator']")
+    }
     
     # Check that user has appropriate permissions to use DFA
     # User must have DOWNLOAD access to the DFA manifest.
-    manifest_perm <- dfamodules::synapse_access(
+    manifest_download_perm <- dfamodules::synapse_access(
       id = selected_dcc_config()$dcc$manifest_dataset_id,
       access = "DOWNLOAD",
       auth = access_token
     )
-    if (!isTRUE(manifest_perm)) {
+    if (!isTRUE(manifest_download_perm)) {
       shinypop::nx_report_error(
         title = "Permission error",
         message = tagList(
