@@ -176,11 +176,11 @@ app_server <- function( input, output, session ) {
     # DATASET DASH VIZ : DISTRIBUTIONS ########################################
 
     dfamodules::mod_distribution_server(
-      id = "distribution_contributor",
+      id = "distribution_source",
       df = filtered_manifest,
-      group_by_var = "contributor",
+      group_by_var = "source",
       title = NULL,
-      x_lab = "Contributor",
+      x_lab = "Source",
       y_lab = "Number of Datasets",
       fill = "#0d1c38"
     )
