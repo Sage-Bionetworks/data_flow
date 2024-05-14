@@ -111,7 +111,7 @@ app_ui <- function() {
                 title = "Distribution of datasets by contributor",
                 status = "primary",
                 collapsible = TRUE,
-                dfamodules::mod_distribution_ui("distribution_contributor")
+                dfamodules::mod_distribution_ui("distribution_source")
               ),
               shinydashboard::box(
                 title = "Distribution of datasets by data type",
