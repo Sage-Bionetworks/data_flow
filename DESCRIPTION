@@ -1,6 +1,6 @@
 Package: dataflow
 Title: Data Flow App Demo
-Version: 23.10.1
+Version: 24.5.1
 Authors@R: person('L', 'Wolfe', email = 'loren.wolfe@sagebase.org', role = c('cre', 'aut'))
 Description: A data flow package.
 License: MIT + file LICENSE
@@ -20,7 +20,8 @@ Imports:
     processx,
     readr,
     shiny,
-    shinyjs
+    shinyjs,
+    shinypop
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3

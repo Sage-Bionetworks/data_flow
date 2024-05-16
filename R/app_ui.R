@@ -10,9 +10,23 @@ app_ui <- function() {
   shiny::tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+    
+    tags$head(
+      tags$link(
+        rel="shortcut icon", 
+        href=FAVICON_URL
+        )
+      ),
 
     # initialize shinyjs
     shinyjs::useShinyjs(),
+    
+    # Add nx report for error messages
+    shinypop::use_notiflix_report(
+      width = "500px",
+      messageMaxLength = 10000,
+      titleMaxLength = 100
+    ),
 
     # define colors for icons in datatable
     # green check
@@ -57,7 +71,7 @@ app_ui <- function() {
         waiter::use_waiter(),
         waiter::waiter_preloader(
           html = shiny::tagList(
-            shiny::img(src = "www/loading.gif"),
+            shiny::img(src = "www/sage-loader.svg"),
             shiny::h4("Retrieving Synapse information...", style = "color:white;")
           ),
           color = "#424874"
@@ -72,8 +86,7 @@ app_ui <- function() {
             tabName = "tab_select_dcc",
             shiny::fluidRow(
               dfamodules::mod_select_dcc_ui(
-                "select_dcc",
-                dcc_config
+                "select_dcc"
               )
             )
           ),
@@ -98,7 +111,7 @@ app_ui <- function() {
                 title = "Distribution of datasets by contributor",
                 status = "primary",
                 collapsible = TRUE,
-                dfamodules::mod_distribution_ui("distribution_contributor")
+                dfamodules::mod_distribution_ui("distribution_source")
               ),
               shinydashboard::box(
                 title = "Distribution of datasets by data type",
@@ -148,7 +161,7 @@ golem_add_external_resources <- function() {
   )
 
   tags$head(
-    favicon(),
+    favicon(resources_path = app_sys("app/www")),
     bundle_resources(
       path = app_sys("app/www"),
       app_title = "Data Flow"
